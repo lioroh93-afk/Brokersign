@@ -6,7 +6,6 @@
 <title>BrokerSign – חתימה על מסמך</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--ink:#0f0e0d;--paper:#f7f4ef;--warm:#faf8f4;--gold:#c9a84c;--deep:#1a1714;--mid:#6b6560;--border:#ddd8cf;--success:#2d6a4f}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -46,7 +45,6 @@ body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);dir
 .checkbox-wrap label{font-size:13px;line-height:1.6;color:var(--mid)}
 .btn{width:100%;padding:14px;border-radius:10px;font-family:'Heebo',sans-serif;font-size:16px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s}
 .btn-primary{background:var(--gold);color:var(--deep)}
-.btn-primary:hover{background:#e8d08a}
 .btn-primary:disabled{background:var(--border);color:var(--mid);cursor:not-allowed}
 .btn-ghost{background:transparent;color:var(--mid);font-size:13px;margin-top:10px}
 .success-screen{text-align:center;padding:60px 20px}
@@ -70,10 +68,7 @@ body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);dir
   <div class="secure">🔒 חתימה מאובטחת</div>
 </div>
 <div class="container">
-  <div id="loading-screen" class="loading-screen">
-    <div class="spinner"></div>
-    <p>טוען את המסמך שלך...</p>
-  </div>
+  <div id="loading-screen" class="loading-screen"><div class="spinner"></div><p>טוען את המסמך שלך...</p></div>
   <div id="error-screen" class="error-screen" style="display:none">
     <div style="font-size:64px;margin-bottom:20px">⚠️</div>
     <h2 style="font-size:22px;font-weight:800;margin-bottom:10px">המסמך לא נמצא</h2>
@@ -92,9 +87,7 @@ body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);dir
   </div>
   <div id="main-content" style="display:none">
     <div id="step1" class="step active">
-      <div class="card">
-        <div class="contract" id="contract-content"></div>
-      </div>
+      <div class="card"><div class="contract" id="contract-content"></div></div>
       <button class="btn btn-primary" onclick="goToStep(2)">קראתי את המסמך ומוכן/ה לחתום ←</button>
     </div>
     <div id="step2" class="step">
@@ -161,30 +154,28 @@ function renderContract(){
   const brokerEmail=brokerData?.email||'—';
   const brokerCompany=brokerData?.company_name||'';
   const docType=docData.document_type;
-  document.title=`BrokerSign – ${typeNames[docType]}`;
-
+  document.title='BrokerSign – '+(typeNames[docType]||'מסמך');
   let html='';
   if(docType==='exclusivity'||!docType){
-    html=`
-    <div class="contract-title">הסכם בלעדיות בתיווך</div>
+    html=`<div class="contract-title">הסכם בלעדיות בתיווך</div>
     <div class="contract-sub">הסכם זה נערך ונחתם ביום ${today}</div>
     <div class="contract-section">
       <div class="contract-section-title">הצדדים להסכם</div>
       <div class="contract-parties">
-        <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--mid)">המתווך:</div>
+        <div style="font-weight:700;font-size:12px;margin-bottom:8px;color:var(--mid)">המתווך:</div>
         <div class="party-row"><div class="party-label">שם:</div><div class="party-value">${brokerName}${brokerCompany?' | '+brokerCompany:''}</div></div>
         <div class="party-row"><div class="party-label">טלפון:</div><div class="party-value">${brokerPhone}</div></div>
         <div class="party-row"><div class="party-label">אימייל:</div><div class="party-value">${brokerEmail}</div></div>
       </div>
       <div class="contract-parties">
-        <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--mid)">בעל הנכס:</div>
+        <div style="font-weight:700;font-size:12px;margin-bottom:8px;color:var(--mid)">בעל הנכס:</div>
         <div class="party-row"><div class="party-label">שם מלא:</div><div class="party-value">${clientName}</div></div>
         <div class="party-row"><div class="party-label">ת.ז.:</div><div class="party-value">${clientId}</div></div>
         <div class="party-row"><div class="party-label">טלפון:</div><div class="party-value">${clientPhone}</div></div>
         <div class="party-row"><div class="party-label">אימייל:</div><div class="party-value">${clientEmail}</div></div>
       </div>
       <div class="contract-parties">
-        <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--mid)">פרטי הנכס:</div>
+        <div style="font-weight:700;font-size:12px;margin-bottom:8px;color:var(--mid)">פרטי הנכס:</div>
         <div class="party-row"><div class="party-label">כתובת:</div><div class="party-value">${property}</div></div>
         <div class="party-row"><div class="party-label">תקופת בלעדיות:</div><div class="party-value">${startDate} עד ${expireDate}</div></div>
         <div class="party-row"><div class="party-label">דמי תיווך:</div><div class="party-value">${fee}</div></div>
@@ -202,21 +193,20 @@ function renderContract(){
         <div class="contract-clause">הסכם זה נערך בהתאם לחוק המתווכים במקרקעין, תשנ"ו-1996 וכל דין רלוונטי אחר.</div>
       </div>
     </div>
-    <div class="contract-highlight">⚖️ חתימה על מסמך זה מהווה הסכמה מלאה ומחייבת לכל התנאים הנקובים לעיל, לרבות תשלום דמי תיווך.</div>
+    <div class="contract-highlight">⚖️ חתימה על מסמך זה מהווה הסכמה מלאה ומחייבת לכל התנאים הנקובים לעיל.</div>
     <div class="contract-footer">מסמך זה נחתם דיגיטלית דרך מערכת BrokerSign | brokersign-rho.vercel.app</div>`;
   } else if(docType==='buyer_agency'){
-    html=`
-    <div class="contract-title">הסכם תיווך – לקוח קונה</div>
+    html=`<div class="contract-title">הסכם תיווך – לקוח קונה</div>
     <div class="contract-sub">הסכם זה נערך ונחתם ביום ${today}</div>
     <div class="contract-section">
       <div class="contract-section-title">הצדדים להסכם</div>
       <div class="contract-parties">
-        <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--mid)">המתווך:</div>
+        <div style="font-weight:700;font-size:12px;margin-bottom:8px;color:var(--mid)">המתווך:</div>
         <div class="party-row"><div class="party-label">שם:</div><div class="party-value">${brokerName}${brokerCompany?' | '+brokerCompany:''}</div></div>
         <div class="party-row"><div class="party-label">טלפון:</div><div class="party-value">${brokerPhone}</div></div>
       </div>
       <div class="contract-parties">
-        <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--mid)">הקונה:</div>
+        <div style="font-weight:700;font-size:12px;margin-bottom:8px;color:var(--mid)">הקונה:</div>
         <div class="party-row"><div class="party-label">שם מלא:</div><div class="party-value">${clientName}</div></div>
         <div class="party-row"><div class="party-label">ת.ז.:</div><div class="party-value">${clientId}</div></div>
         <div class="party-row"><div class="party-label">טלפון:</div><div class="party-value">${clientPhone}</div></div>
@@ -228,29 +218,27 @@ function renderContract(){
       <div class="contract-section-title">תנאי ההסכם</div>
       <div class="contract-body">
         <div class="contract-clause">הקונה מסמיך את המתווך לאתר עבורו נכסים המתאימים לדרישותיו, לנהל מו"מ בשמו ולסייע בהשלמת עסקת הרכישה.</div>
-        <div class="contract-clause">בגין כל עסקה שתושלם בתקופה הנקובה – בין אם באמצעות המתווך ובין אם לאו – יחויב הקונה בדמי תיווך של <strong>${fee}</strong> ממחיר הרכישה, בתוספת מע"מ.</div>
-        <div class="contract-clause">הקונה מתחייב שלא לרכוש נכסים שהוצגו לו על ידי המתווך דרך גורם אחר, ללא הסכמה כתובה.</div>
+        <div class="contract-clause">בגין כל עסקה שתושלם – יחויב הקונה בדמי תיווך של <strong>${fee}</strong> ממחיר הרכישה, בתוספת מע"מ.</div>
+        <div class="contract-clause">הקונה מתחייב שלא לרכוש נכסים שהוצגו לו על ידי המתווך דרך גורם אחר ללא הסכמה כתובה.</div>
         <div class="contract-clause">דמי התיווך ישולמו במועד חתימת חוזה הרכישה.</div>
       </div>
     </div>
-    <div class="contract-highlight">⚖️ חתימה על מסמך זה מהווה הסכמה מלאה ומחייבת לכל התנאים.</div>
+    <div class="contract-highlight">⚖️ חתימה על מסמך זה מהווה הסכמה מלאה ומחייבת.</div>
     <div class="contract-footer">מסמך זה נחתם דיגיטלית דרך מערכת BrokerSign</div>`;
   } else {
     html=`<div class="contract-title">${typeNames[docType]||'מסמך'}</div>
-    <div class="contract-sub">הסכם זה נערך ונחתם ביום ${today}</div>
+    <div class="contract-sub">הסכם זה נערך ביום ${today}</div>
     <div class="contract-section">
-      <div class="contract-section-title">פרטי המסמך</div>
+      <div class="contract-section-title">פרטים</div>
       <div class="contract-parties">
         <div class="party-row"><div class="party-label">מתווך:</div><div class="party-value">${brokerName}</div></div>
         <div class="party-row"><div class="party-label">לקוח:</div><div class="party-value">${clientName}</div></div>
-        <div class="party-row"><div class="party-label">ת.ז.:</div><div class="party-value">${clientId}</div></div>
         <div class="party-row"><div class="party-label">נכס:</div><div class="party-value">${property}</div></div>
         <div class="party-row"><div class="party-label">דמי תיווך:</div><div class="party-value">${fee}</div></div>
-        <div class="party-row"><div class="party-label">תקופה:</div><div class="party-value">${startDate} עד ${expireDate}</div></div>
       </div>
     </div>
-    <div class="contract-highlight">⚖️ חתימה על מסמך זה מחייבת לכל דבר.</div>
-    <div class="contract-footer">מסמך זה נחתם דיגיטלית דרך מערכת BrokerSign</div>`;
+    <div class="contract-highlight">⚖️ חתימה מחייבת לכל דבר.</div>
+    <div class="contract-footer">נחתם דרך BrokerSign</div>`;
   }
   document.getElementById('contract-content').innerHTML=html;
 }
@@ -261,14 +249,12 @@ function showError(msg){
   el.style.display='block';
   if(msg)el.querySelector('p').textContent=msg;
 }
-
 function goToStep(n){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   document.getElementById('step'+n).classList.add('active');
   if(n===2)setTimeout(initSig,100);
   window.scrollTo(0,0);
 }
-
 function initSig(){
   sigCanvas=document.getElementById('sig-canvas');
   const area=document.getElementById('sig-area');
@@ -284,7 +270,6 @@ function initSig(){
   sigCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(!signing)return;const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();},{passive:false});
   sigCanvas.addEventListener('touchend',()=>signing=false);
 }
-
 function clearSig(){if(!sigCtx)return;sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);hasSig=false;document.getElementById('sig-ph').style.display='flex';checkReady();}
 function checkReady(){const name=document.getElementById('signer-name').value.trim();const agreed=document.getElementById('agree-check').checked;document.getElementById('submit-btn').disabled=!(hasSig&&name&&agreed);}
 document.addEventListener('input',checkReady);
@@ -305,8 +290,8 @@ async function submitSignature(){
   const brokerName=brokerData?.full_name||'המתווך';
   const clientName=c.client_name||name;
   const emailBody=buildEmailHTML(clientName,brokerName,typeName,dateStr,name,sigImage);
-  if(c.client_email) await sendEmail(c.client_email,`✅ המסמך נחתם – ${typeName}`,emailBody);
-  if(brokerData?.email) await sendEmail(brokerData.email,`✅ ${clientName} חתם/ה על ${typeName}`,emailBody);
+  if(c.client_email)await sendEmail(c.client_email,'✅ המסמך נחתם – '+typeName,emailBody);
+  if(brokerData?.email)await sendEmail(brokerData.email,'✅ '+clientName+' חתם/ה על '+typeName,emailBody);
   document.getElementById('main-content').style.display='none';
   document.getElementById('success-screen').style.display='block';
   document.getElementById('success-name').textContent='חתם/ה: '+name;
@@ -349,70 +334,71 @@ async function sendEmail(to,subject,html){
   catch(e){console.log('Email error:',e);}
 }
 
-function downloadPDF(){
-  const{jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const c=docData.content||{};
-  const clientName=c.client_name||docData.title||'—';
-  const today=signedAt?signedAt.toLocaleDateString('he-IL'):new Date().toLocaleDateString('he-IL');
-  const dateTime=signedAt?signedAt.toLocaleDateString('he-IL')+' '+signedAt.toLocaleTimeString('he-IL'):today;
+async function downloadPDF(){
+  const btn=document.querySelector('.download-btn');
+  if(btn){btn.textContent='⏳ מכין PDF...';btn.disabled=true;}
+  const sigImg=sigCanvas?sigCanvas.toDataURL('image/png'):'';
+  const dateTime=signedAt?signedAt.toLocaleDateString('he-IL')+' '+signedAt.toLocaleTimeString('he-IL'):new Date().toLocaleDateString('he-IL');
   const typeName=typeNames[docData.document_type]||'מסמך';
-  const brokerName=brokerData?.full_name||'—';
-  const fee=docData.fee_percent||'—';
-  const property=docData.notes||'—';
-  const sd=docData.start_date?new Date(docData.start_date).toLocaleDateString('he-IL'):'—';
-  const ed=docData.expire_date?new Date(docData.expire_date).toLocaleDateString('he-IL'):'—';
-
-  doc.setFillColor(26,23,20);doc.rect(0,0,210,30,'F');
-  doc.setTextColor(201,168,76);doc.setFontSize(18);doc.setFont('helvetica','bold');
-  doc.text('BrokerSign',105,18,{align:'center'});
-  doc.setTextColor(15,14,13);doc.setFontSize(16);
-  doc.text(typeName,105,45,{align:'center'});
-  doc.setFontSize(10);doc.setTextColor(107,101,96);
-  doc.text('Signed: '+dateTime,105,52,{align:'center'});
-  doc.setDrawColor(201,168,76);doc.setLineWidth(0.5);doc.line(20,56,190,56);
-
-  doc.setTextColor(15,14,13);doc.setFontSize(11);doc.setFont('helvetica','bold');
-  doc.text('PARTIES',20,65);
-  doc.setFont('helvetica','normal');doc.setFontSize(10);
-  doc.text('Broker: '+brokerName,20,73);
-  doc.text('Client: '+clientName,20,80);
-  doc.text('ID: '+(c.client_id||'—'),20,87);
-  doc.text('Phone: '+(c.client_phone||'—'),110,80);
-  doc.text('Email: '+(c.client_email||'—'),110,87);
-
-  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('PROPERTY & TERMS',20,100);
-  doc.setFont('helvetica','normal');doc.setFontSize(10);
-  doc.text('Property: '+property,20,108);
-  doc.text('Fee: '+fee,20,115);
-  doc.text('Period: '+sd+' to '+ed,20,122);
-
-  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('CONTRACT TERMS',20,135);
-  doc.setFont('helvetica','normal');doc.setFontSize(9);
-  const terms=['1. The owner exclusively authorizes the broker to market the property during the exclusivity period.','2. No other broker may be engaged without written consent during this period.','3. Brokerage fee of '+fee+' is due upon any transaction, whether or not facilitated by the broker.','4. The broker commits to best efforts in marketing, including advertising and negotiation.','5. This agreement is governed by the Israeli Real Estate Brokers Law, 1996.'];
-  let y=143;
-  terms.forEach(t=>{const lines=doc.splitTextToSize(t,170);doc.text(lines,20,y);y+=lines.length*5+2;});
-
-  y+=6;doc.setDrawColor(201,168,76);doc.setLineWidth(0.5);doc.line(20,y,190,y);y+=10;
-  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('DIGITAL SIGNATURE',20,y);y+=8;
-  doc.setFont('helvetica','normal');doc.setFontSize(10);
-  doc.text('Signer name: '+signerNameFinal,20,y);
-  doc.text('Date & Time: '+dateTime,20,y+7);
-  doc.text('Document ID: '+docData.id,20,y+14);
-
-  if(sigCanvas){
-    const sigImg=sigCanvas.toDataURL('image/png');
-    doc.addImage(sigImg,'PNG',120,y-5,70,28);
-    doc.setDrawColor(180,180,180);doc.setLineWidth(0.3);doc.rect(120,y-5,70,28);
-    doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Digital Signature',155,y+26,{align:'center'});
-  }
-
-  doc.setFillColor(247,244,239);doc.rect(0,272,210,25,'F');
-  doc.setTextColor(107,101,96);doc.setFontSize(8);
-  doc.text('Signed digitally via BrokerSign | brokersign-rho.vercel.app',105,281,{align:'center'});
-  doc.text('This digital signature is legally binding under Israeli law.',105,287,{align:'center'});
-
-  doc.save(`BrokerSign_${typeName}_${clientName}_${today.replace(/\//g,'-')}.pdf`);
+  const printWin=window.open('','_blank');
+  printWin.document.write(`<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="UTF-8"><title>BrokerSign – ${typeName}</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',Arial,sans-serif;direction:rtl;color:#0f0e0d;background:#fff}
+.header{background:#1a1714;padding:20px;text-align:center}
+.header h1{color:#c9a84c;font-size:22px}
+.header p{color:rgba(255,255,255,0.5);font-size:11px;margin-top:4px}
+.body{padding:28px 36px}
+.contract-title{text-align:center;font-size:20px;font-weight:900;margin-bottom:4px}
+.contract-sub{text-align:center;font-size:12px;color:#6b6560;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #0f0e0d}
+.contract-section{margin-bottom:18px}
+.contract-section-title{font-size:13px;font-weight:800;margin-bottom:8px;border-right:3px solid #c9a84c;padding-right:8px}
+.contract-parties{background:#f7f4ef;border:1px solid #ddd8cf;border-radius:6px;padding:12px;margin-bottom:10px}
+.party-row{display:grid;grid-template-columns:120px 1fr;gap:6px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:12px}
+.party-row:last-child{border-bottom:none}
+.party-label{color:#6b6560;font-weight:600}
+.party-value{font-weight:700}
+.contract-body{counter-reset:clause-counter}
+.contract-clause{font-size:12px;line-height:1.7;margin-bottom:8px;padding-right:16px;position:relative}
+.contract-clause::before{content:counter(clause-counter);counter-increment:clause-counter;position:absolute;right:0;font-weight:800;color:#c9a84c;font-size:11px}
+.contract-highlight{background:#fff8e6;border:1px solid #e8d08a;border-radius:6px;padding:10px;font-size:12px;font-weight:600;margin:12px 0}
+.contract-footer{display:none}
+.sig-section{margin-top:20px;padding-top:16px;border-top:2px solid #0f0e0d}
+.sig-title{font-size:13px;font-weight:800;margin-bottom:12px}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.sig-details{font-size:12px;line-height:2}
+.sig-lbl{color:#6b6560;font-weight:600}
+.sig-img-wrap{border:1px solid #ddd8cf;border-radius:6px;padding:8px;text-align:center;background:#f7f4ef}
+.sig-img-wrap img{max-width:100%;height:60px;object-fit:contain}
+.sig-img-wrap p{font-size:10px;color:#6b6560;margin-top:4px}
+.footer{margin-top:16px;padding-top:12px;border-top:1px solid #ddd8cf;text-align:center;font-size:10px;color:#6b6560}
+@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="header"><h1>BrokerSign</h1><p>אישור חתימה דיגיטלית</p></div>
+<div class="body">
+${document.getElementById('contract-content').innerHTML}
+<div class="sig-section">
+  <div class="sig-title">✍️ פרטי החתימה הדיגיטלית</div>
+  <div class="sig-grid">
+    <div class="sig-details">
+      <div><span class="sig-lbl">שם החותם: </span><strong>${signerNameFinal}</strong></div>
+      <div><span class="sig-lbl">תאריך ושעה: </span>${dateTime}</div>
+      <div><span class="sig-lbl">מזהה מסמך: </span><span style="font-size:10px">${docData.id}</span></div>
+    </div>
+    ${sigImg?`<div class="sig-img-wrap"><img src="${sigImg}"><p>חתימה דיגיטלית</p></div>`:''}
+  </div>
+</div>
+<div class="footer">
+  <p>מסמך זה נחתם דיגיטלית דרך מערכת BrokerSign | brokersign-rho.vercel.app</p>
+  <p>החתימה הדיגיטלית מחייבת לכל דבר ועניין בהתאם לחוק</p>
+</div>
+</div>
+<script>window.onload=function(){setTimeout(function(){window.print();},600);}<\/script>
+</body></html>`);
+  printWin.document.close();
+  if(btn){btn.textContent='📄 הורד מסמך PDF חתום';btn.disabled=false;}
 }
 
 init();
