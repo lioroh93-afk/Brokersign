@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrokerSign – חתימה על מסמך</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--ink:#0f0e0d;--paper:#f7f4ef;--warm:#faf8f4;--gold:#c9a84c;--deep:#1a1714;--mid:#6b6560;--border:#ddd8cf;--success:#2d6a4f;--danger:#8b2020}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);direction:rtl;min-height:100vh}
+.header{background:var(--deep);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.header .brand{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold)}
+.header .secure{font-size:12px;color:rgba(255,255,255,0.5)}
+.container{max-width:680px;margin:0 auto;padding:32px 20px}
+.card{background:var(--warm);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px}
+.card h2{font-size:18px;font-weight:800;margin-bottom:6px}
+.card .sub{font-size:13px;color:var(--mid);margin-bottom:20px}
+.doc-content h3{text-align:center;font-size:17px;font-weight:800;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.doc-content .section{margin-bottom:14px}
+.doc-content .section strong{display:block;font-size:11px;text-transform:uppercase;color:var(--mid);margin-bottom:4px}
+.doc-content .section span{font-size:15px;font-weight:600}
+.doc-content .body-text{background:rgba(0,0,0,0.02);border-radius:8px;padding:16px;font-size:13px;line-height:1.8;color:#333;margin-top:16px}
+.meta-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
+.info-box{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#7a5c00;margin-bottom:20px}
+.sig-label{font-size:13px;font-weight:600;margin-bottom:8px;display:block}
+.sig-area{border:2px dashed var(--border);border-radius:10px;background:#fff;height:160px;position:relative;overflow:hidden;cursor:crosshair;margin-bottom:10px;touch-action:none}
+.sig-area canvas{position:absolute;inset:0}
+.sig-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mid);font-size:14px;pointer-events:none}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Heebo',sans-serif;font-size:14px;background:#fff;direction:rtl}
+.form-input:focus{outline:none;border-color:var(--gold)}
+.checkbox-wrap{display:flex;gap:10px;align-items:flex-start;margin-bottom:20px}
+.checkbox-wrap input{width:18px;height:18px;margin-top:2px;flex-shrink:0}
+.checkbox-wrap label{font-size:13px;line-height:1.6;color:var(--mid)}
+.btn{width:100%;padding:14px;border-radius:10px;font-family:'Heebo',sans-serif;font-size:16px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s}
+.btn-primary{background:var(--gold);color:var(--deep)}
+.btn-primary:hover{background:#e8d08a}
+.btn-primary:disabled{background:var(--border);color:var(--mid);cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--mid);font-size:13px;margin-top:10px}
+.success-screen{text-align:center;padding:60px 20px}
+.success-screen .check{font-size:72px;margin-bottom:20px}
+.success-screen h2{font-size:24px;font-weight:800;margin-bottom:10px}
+.success-screen p{color:var(--mid);font-size:15px;line-height:1.7}
+.success-screen .details{background:rgba(45,106,79,0.08);border:1px solid rgba(45,106,79,0.2);border-radius:10px;padding:16px;margin:20px 0;text-align:right;font-size:13px}
+.error-screen{text-align:center;padding:80px 20px}
+.error-screen .icon{font-size:64px;margin-bottom:20px}
+.error-screen h2{font-size:22px;font-weight:800;margin-bottom:10px}
+.error-screen p{color:var(--mid)}
+.loading-screen{text-align:center;padding:80px 20px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.step{display:none}
+.step.active{display:block}
+@media(max-width:480px){.container{padding:16px}.card{padding:20px}.meta-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="brand">BrokerSign</div>
+  <div class="secure">🔒 חתימה מאובטחת</div>
+</div>
+<div class="container">
+  <div id="loading-screen" class="loading-screen">
+    <div class="spinner"></div>
+    <p>טוען את המסמך שלך...</p>
+  </div>
+  <div id="error-screen" class="error-screen" style="display:none">
+    <div class="icon">⚠️</div>
+    <h2>המסמך לא נמצא</h2>
+    <p>הקישור שגוי או שפג תוקפו. פנה למתווך שלך לקבלת קישור חדש.</p>
+  </div>
+  <div id="success-screen" class="success-screen" style="display:none">
+    <div class="check">✅</div>
+    <h2>החתימה התקבלה!</h2>
+    <p>חתמת בהצלחה על המסמך.</p>
+    <div class="details">
+      <strong>פרטי החתימה:</strong>
+      <span id="success-name"></span><br>
+      <span id="success-date"></span>
+    </div>
+    <p style="font-size:12px;color:var(--mid);margin-top:16px">שמור עמוד זה כאסמכתא לחתימתך</p>
+  </div>
+  <div id="main-content" style="display:none">
+    <div id="step1" class="step active">
+      <div class="card">
+        <h2 id="doc-title">טוען...</h2>
+        <div class="sub" id="doc-sub"></div>
+        <div class="info-box">📋 קרא/י את המסמך בעיון לפני החתימה</div>
+        <div class="doc-content" id="doc-body"></div>
+      </div>
+      <button class="btn btn-primary" onclick="goToStep(2)">קראתי ומוכן/ה לחתום ←</button>
+    </div>
+    <div id="step2" class="step">
+      <div class="card">
+        <h2>חתימה דיגיטלית</h2>
+        <div class="sub">חתום/י בתיבה למטה באצבע או בעכבר</div>
+        <span class="sig-label">חתימתך:</span>
+        <div class="sig-area" id="sig-area">
+          <canvas id="sig-canvas"></canvas>
+          <div class="sig-placeholder" id="sig-ph">חתום/י כאן</div>
+        </div>
+        <button class="btn btn-ghost" onclick="clearSig()" style="width:auto;padding:6px 16px;font-size:12px;margin-bottom:20px">🗑 נקה</button>
+        <div class="form-group">
+          <label class="form-label">שם מלא לאישור *</label>
+          <input class="form-input" id="signer-name" placeholder="הכנס/י שמך המלא">
+        </div>
+        <div class="checkbox-wrap">
+          <input type="checkbox" id="agree-check">
+          <label for="agree-check">אני מאשר/ת שקראתי את המסמך והבנתי את תוכנו. חתימתי הדיגיטלית מחייבת אותי כחתימה בכתב.</label>
+        </div>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitSignature()" disabled>✅ אני מאשר/ת וחותם/ת על המסמך</button>
+        <button class="btn btn-ghost" onclick="goToStep(1)">→ חזור לקריאת המסמך</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const SUPABASE_URL='https://lrelmsldoqkifmxionnk.supabase.co';
+const SUPABASE_KEY='sb_publishable_Z9haU6VnacVW52WoW_Qtsw_bZp9Rs9_';
+const {createClient}=supabase;
+const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח',buyer_agency:'הסכם תיווך – לקוח קונה'};
+const bodyTexts={exclusivity:'בעל הנכס מסמיך בזאת את המתווך בלעדית לשווק ולמכור/להשכיר את הנכס הנ"ל בתקופת הבלעדיות. כל עסקה שתתבצע בגין הנכס תחייב תשלום דמי תיווך כאמור.',management:'בעל הנכס מסמיך את המתווך לנהל עבורו את הנכס, לרבות איתור שוכרים, ניהול מו"מ, גביית שכ"ד ופיקוח על תחזוקה.',memorandum:'הצדדים מאשרים הסכמתם העקרונית לעסקה. זיכרון דברים זה מחייב את הצדדים לחתום על חוזה מפורט תוך 14 ימים.',poa:'אני הח"מ מייפה בזאת את כוחו של המתווך לפעול בשמי בכל הקשור לנכס המפורט.',buyer_agency:'הקונה מסמיך את המתווך לאתר עבורו נכסים, לנהל מו"מ בשמו ולסייע בהשלמת העסקה. בגין כל עסקה שתושלם ישולמו דמי תיווך כאמור.'};
+let docData=null,sigCanvas,sigCtx,signing=false,hasSig=false;
+async function init(){
+  const token=new URLSearchParams(window.location.search).get('token');
+  if(!token){showError();return;}
+  const{data,error}=await sb.from('documents').select('*').eq('signing_token',token).eq('status','pending').single();
+  if(error||!data){showError();return;}
+  docData=data;renderDoc(data);
+  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('main-content').style.display='block';
+  initSig();
+}
+function renderDoc(doc){
+  const typeName=typeNames[doc.document_type]||doc.document_type;
+  document.title='BrokerSign – '+typeName;
+  document.getElementById('doc-title').textContent=typeName;
+  document.getElementById('doc-sub').textContent='נשלח אליך לחתימה דיגיטלית מאובטחת';
+  const c=doc.content||{};
+  const today=new Date().toLocaleDateString('he-IL');
+  document.getElementById('doc-body').innerHTML=`
+    <h3>${typeName}</h3>
+    <div class="meta-row">
+      <div class="section"><strong>לקוח</strong><span>${c.client_name||doc.title||'—'}</span></div>
+      <div class="section"><strong>ת.ז.</strong><span>${c.client_id||'—'}</span></div>
+    </div>
+    <div class="section"><strong>נכס</strong><span>${doc.notes||'—'}</span></div>
+    <div class="meta-row">
+      <div class="section"><strong>תאריך תחילה</strong><span>${doc.start_date?new Date(doc.start_date).toLocaleDateString('he-IL'):'—'}</span></div>
+      <div class="section"><strong>תאריך סיום</strong><span>${doc.expire_date?new Date(doc.expire_date).toLocaleDateString('he-IL'):'—'}</span></div>
+    </div>
+    <div class="section"><strong>דמי תיווך</strong><span>${doc.fee_percent||'—'}</span></div>
+    <div class="section"><strong>תאריך</strong><span>${today}</span></div>
+    <div class="body-text">${bodyTexts[doc.document_type]||''}</div>`;
+}
+function showError(){document.getElementById('loading-screen').style.display='none';document.getElementById('error-screen').style.display='block';}
+function goToStep(n){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('step'+n).classList.add('active');if(n===2)setTimeout(initSig,100);window.scrollTo(0,0);}
+function initSig(){
+  sigCanvas=document.getElementById('sig-canvas');
+  const area=document.getElementById('sig-area');
+  sigCanvas.width=area.offsetWidth;sigCanvas.height=area.offsetHeight;
+  sigCtx=sigCanvas.getContext('2d');
+  sigCtx.strokeStyle='#0f0e0d';sigCtx.lineWidth=2.5;sigCtx.lineCap='round';sigCtx.lineJoin='round';
+  const pos=e=>{const r=sigCanvas.getBoundingClientRect();return e.touches?{x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}:{x:e.clientX-r.left,y:e.clientY-r.top};};
+  sigCanvas.addEventListener('mousedown',e=>{e.preventDefault();signing=true;hasSig=true;document.getElementById('sig-ph').style.display='none';const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);checkReady();});
+  sigCanvas.addEventListener('mousemove',e=>{if(!signing)return;const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();});
+  sigCanvas.addEventListener('mouseup',()=>signing=false);
+  sigCanvas.addEventListener('touchstart',e=>{e.preventDefault();signing=true;hasSig=true;document.getElementById('sig-ph').style.display='none';const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);checkReady();},{passive:false});
+  sigCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(!signing)return;const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();},{passive:false});
+  sigCanvas.addEventListener('touchend',()=>signing=false);
+}
+function clearSig(){if(!sigCtx)return;sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);hasSig=false;document.getElementById('sig-ph').style.display='flex';checkReady();}
+function checkReady(){const name=document.getElementById('signer-name').value.trim();const agreed=document.getElementById('agree-check').checked;document.getElementById('submit-btn').disabled=!(hasSig&&name&&agreed);}
+document.addEventListener('input',checkReady);
+document.addEventListener('change',checkReady);
+async function submitSignature(){
+  const name=document.getElementById('signer-name').value.trim();
+  if(!hasSig||!name)return;
+  const sigImage=sigCanvas.toDataURL('image/png');
+  document.getElementById('submit-btn').disabled=true;
+  document.getElementById('submit-btn').textContent='שומר חתימה...';
+  const{error}=await sb.from('documents').update({status:'signed',signed_at:new Date().toISOString(),signature_image:sigImage,signer_name_confirmed:name}).eq('id',docData.id);
+  if(error){alert('שגיאה. נסה שוב.');document.getElementById('submit-btn').disabled=false;document.getElementById('submit-btn').textContent='✅ אני מאשר/ת וחותם/ת';return;}
+  document.getElementById('main-content').style.display='none';
+  document.getElementById('success-screen').style.display='block';
+  document.getElementById('success-name').textContent='חתם/ה: '+name;
+  document.getElementById('success-date').textContent='תאריך: '+new Date().toLocaleDateString('he-IL')+' '+new Date().toLocaleTimeString('he-IL');
+  window.scrollTo(0,0);
+}
+init();
+</script>
+</body>
+</html>
