@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -8,348 +7,150 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root {
-  --ink: #0f0e0d;
-  --paper: #f7f4ef;
-  --warm: #faf8f4;
-  --gold: #c9a84c;
-  --gold-light: #e8d08a;
-  --deep: #1a1714;
-  --mid: #6b6560;
-  --border: #ddd8cf;
-  --success: #2d6a4f;
-  --danger: #8b2020;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Heebo',sans-serif; background:var(--paper); color:var(--ink); direction:rtl; min-height:100vh; }
-
-/* AUTH SCREEN */
-.auth-screen {
-min-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-background: linear-gradient(135deg, var(–deep) 0%, #2d2520 100%);
-padding:20px;
-}
-.auth-card {
-background:var(–warm);
-border-radius:20px;
-padding:48px 40px;
-width:100%;
-max-width:420px;
-box-shadow:0 32px 80px rgba(0,0,0,0.4);
-}
-.auth-logo { text-align:center; margin-bottom:32px; }
-.auth-logo .brand { font-family:‘Playfair Display’,serif; font-size:32px; color:var(–gold); }
-.auth-logo .sub { font-size:13px; color:var(–mid); margin-top:4px; }
-.auth-tabs { display:flex; border-bottom:2px solid var(–border); margin-bottom:28px; }
-.auth-tab {
-flex:1; padding:10px; text-align:center; cursor:pointer;
-font-size:14px; font-weight:600; color:var(–mid);
-border-bottom:2px solid transparent; margin-bottom:-2px;
-transition:all 0.2s;
-}
-.auth-tab.active { color:var(–gold); border-bottom-color:var(–gold); }
-.form-group { margin-bottom:16px; }
-.form-label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
-.form-input {
-width:100%; padding:11px 14px;
-border:1.5px solid var(–border); border-radius:8px;
-font-family:‘Heebo’,sans-serif; font-size:14px;
-background:#fff; direction:rtl; transition:border-color 0.2s;
-}
-.form-input:focus { outline:none; border-color:var(–gold); }
-.btn-auth {
-width:100%; padding:13px;
-background:var(–gold); color:var(–deep);
-border:none; border-radius:8px;
-font-family:‘Heebo’,sans-serif; font-size:15px; font-weight:700;
-cursor:pointer; transition:all 0.2s; margin-top:8px;
-}
-.btn-auth:hover { background:var(–gold-light); }
-.auth-error { background:#fee; border:1px solid #fcc; border-radius:8px; padding:10px 14px; font-size:13px; color:var(–danger); margin-bottom:14px; display:none; }
-
-/* APP */
-.app { display:none; }
-.app-layout { display:flex; min-height:100vh; }
-
-/* SIDEBAR */
-.sidebar {
-width:240px; background:var(–deep); color:#fff;
-display:flex; flex-direction:column;
-position:fixed; height:100vh; right:0; z-index:100; overflow-y:auto;
-}
-.sidebar-logo { padding:28px 24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
-.sidebar-logo .brand { font-family:‘Playfair Display’,serif; font-size:22px; color:var(–gold); }
-.sidebar-logo .sub { font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px; font-weight:300; }
-.sidebar-section { padding:18px 16px 8px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.3); font-weight:600; }
-.nav-item {
-display:flex; align-items:center; gap:10px;
-padding:11px 20px; cursor:pointer; transition:all 0.2s;
-font-size:14px; color:rgba(255,255,255,0.65);
-border-right:3px solid transparent; margin:1px 0;
-}
-.nav-item:hover { background:rgba(255,255,255,0.06); color:#fff; }
-.nav-item.active { background:rgba(201,168,76,0.12); color:var(–gold); border-right-color:var(–gold); }
-.nav-item .icon { font-size:16px; width:20px; text-align:center; }
-.sidebar-footer { margin-top:auto; padding:20px; border-top:1px solid rgba(255,255,255,0.08); }
-.user-info { font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:10px; }
-.user-info strong { display:block; color:rgba(255,255,255,0.85); font-size:13px; }
-.btn-logout {
-width:100%; padding:8px; background:rgba(255,255,255,0.08);
-color:rgba(255,255,255,0.6); border:none; border-radius:6px;
-font-family:‘Heebo’,sans-serif; font-size:12px; cursor:pointer;
-transition:all 0.2s;
-}
-.btn-logout:hover { background:rgba(255,255,255,0.15); color:#fff; }
-
-/* MAIN */
-.main { margin-right:240px; flex:1; display:flex; flex-direction:column; }
-.topbar {
-background:var(–warm); border-bottom:1px solid var(–border);
-padding:16px 32px; display:flex; align-items:center;
-justify-content:space-between; position:sticky; top:0; z-index:50;
-}
-.topbar h1 { font-size:20px; font-weight:700; }
-.topbar .breadcrumb { font-size:13px; color:var(–mid); margin-top:2px; }
-.topbar-actions { display:flex; gap:10px; align-items:center; }
-.btn {
-padding:9px 20px; border-radius:6px;
-font-family:‘Heebo’,sans-serif; font-size:13px; font-weight:600;
-cursor:pointer; border:none; transition:all 0.2s;
-display:inline-flex; align-items:center; gap:6px;
-}
-.btn-primary { background:var(–gold); color:var(–deep); }
-.btn-primary:hover { background:var(–gold-light); }
-.btn-outline { background:transparent; border:1.5px solid var(–border); color:var(–ink); }
-.btn-outline:hover { border-color:var(–gold); color:var(–gold); }
-.btn-ghost { background:transparent; color:var(–mid); }
-.btn-ghost:hover { color:var(–ink); background:rgba(0,0,0,0.05); }
-.content { padding:28px 32px; flex:1; }
-
-/* STATS */
-.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
-.stat-card {
-background:var(–warm); border:1px solid var(–border);
-border-radius:10px; padding:20px; transition:box-shadow 0.2s;
-}
-.stat-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
-.stat-label { font-size:12px; color:var(–mid); font-weight:500; text-transform:uppercase; letter-spacing:0.5px; }
-.stat-value { font-size:28px; font-weight:800; margin-top:6px; }
-.stat-value.gold { color:var(–gold); }
-.stat-sub { font-size:12px; color:var(–mid); margin-top:4px; }
-
-/* CARD / TABLE */
-.card { background:var(–warm); border:1px solid var(–border); border-radius:12px; overflow:hidden; }
-.card-header { padding:18px 24px; border-bottom:1px solid var(–border); display:flex; align-items:center; justify-content:space-between; }
-.card-header h2 { font-size:15px; font-weight:700; }
-table { width:100%; border-collapse:collapse; }
-th { padding:12px 20px; text-align:right; font-size:11px; letter-spacing:0.8px; text-transform:uppercase; color:var(–mid); font-weight:600; background:rgba(0,0,0,0.02); border-bottom:1px solid var(–border); }
-td { padding:14px 20px; font-size:14px; border-bottom:1px solid rgba(0,0,0,0.04); vertical-align:middle; }
-tr:last-child td { border-bottom:none; }
-tr:hover td { background:rgba(201,168,76,0.04); }
-
-.badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; }
-.badge-pending { background:#fff3cd; color:#856404; }
-.badge-signed { background:#d1e7dd; color:#0f5132; }
-.badge-expired { background:#f8d7da; color:#842029; }
-.badge-draft { background:#e2e3e5; color:#41464b; }
-
-.empty-state { text-align:center; padding:60px 20px; color:var(–mid); }
-.empty-state .emoji { font-size:48px; margin-bottom:12px; }
-
-/* MODAL */
-.modal-overlay {
-position:fixed; inset:0; background:rgba(15,14,13,0.65);
-z-index:200; display:flex; align-items:center; justify-content:center;
-backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition:opacity 0.25s;
-}
-.modal-overlay.open { opacity:1; pointer-events:all; }
-.modal {
-background:var(–warm); border-radius:16px; width:560px;
-max-width:95vw; max-height:90vh; overflow-y:auto;
-box-shadow:0 24px 60px rgba(0,0,0,0.3);
-transform:translateY(20px); transition:transform 0.25s;
-}
-.modal-overlay.open .modal { transform:translateY(0); }
-.modal-header { padding:24px 28px 20px; border-bottom:1px solid var(–border); display:flex; align-items:center; justify-content:space-between; }
-.modal-header h2 { font-size:18px; font-weight:800; }
-.modal-body { padding:24px 28px; }
-.modal-footer { padding:18px 28px; border-top:1px solid var(–border); display:flex; gap:10px; }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.form-select, .form-textarea {
-width:100%; padding:10px 14px; border:1.5px solid var(–border);
-border-radius:8px; font-family:‘Heebo’,sans-serif; font-size:14px;
-background:#fff; direction:rtl; transition:border-color 0.2s;
-}
-.form-select:focus, .form-textarea:focus { outline:none; border-color:var(–gold); }
-.form-textarea { resize:vertical; min-height:80px; }
-
-.doc-type-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px; }
-.doc-type-option {
-border:1.5px solid var(–border); border-radius:8px; padding:12px 14px;
-cursor:pointer; transition:all 0.2s; font-size:13px;
-display:flex; align-items:center; gap:8px; background:#fff;
-}
-.doc-type-option:hover { border-color:var(–gold); }
-.doc-type-option.selected { border-color:var(–gold); background:rgba(201,168,76,0.08); font-weight:600; }
-
-.send-method-row { display:flex; gap:8px; }
-.send-method-btn {
-flex:1; padding:10px; border:1.5px solid var(–border);
-border-radius:8px; cursor:pointer; text-align:center; font-size:12px;
-transition:all 0.2s; background:#fff; font-family:‘Heebo’,sans-serif; font-weight:500;
-}
-.send-method-btn:hover { border-color:var(–gold); }
-.send-method-btn.selected { border-color:var(–gold); background:rgba(201,168,76,0.1); font-weight:700; }
-
-.steps { display:flex; gap:0; border-bottom:1px solid var(–border); padding-bottom:0; margin-bottom:24px; }
-.step { display:flex; align-items:center; gap:8px; padding:0 0 14px; margin-left:24px; font-size:13px; color:var(–mid); border-bottom:2px solid transparent; margin-bottom:-1px; }
-.step.active { color:var(–gold); border-bottom-color:var(–gold); font-weight:700; }
-.step.done { color:var(–success); }
-.step-num { width:22px; height:22px; border-radius:50%; background:var(–border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
-.step.active .step-num { background:var(–gold); color:var(–deep); }
-.step.done .step-num { background:var(–success); color:#fff; }
-
-.info-box { background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.3); border-radius:8px; padding:12px 16px; font-size:13px; color:#7a5c00; display:flex; gap:8px; margin-bottom:16px; }
-
-/* SIGNATURE PAD */
-.sig-area {
-border:2px dashed var(–border); border-radius:8px; background:#fff;
-height:140px; display:flex; flex-direction:column; align-items:center;
-justify-content:center; cursor:crosshair; position:relative; overflow:hidden; margin-bottom:8px;
-}
-.sig-area canvas { position:absolute; inset:0; }
-.sig-placeholder { color:var(–mid); font-size:13px; pointer-events:none; z-index:1; }
-
-/* TOAST */
-.toast {
-position:fixed; bottom:24px; left:24px; background:var(–deep); color:#fff;
-padding:14px 20px; border-radius:10px; font-size:14px; font-weight:500;
-box-shadow:0 8px 24px rgba(0,0,0,0.25); transform:translateY(80px); opacity:0;
-transition:all 0.3s; z-index:500; display:flex; align-items:center; gap:10px; min-width:260px;
-}
-.toast.show { transform:translateY(0); opacity:1; }
-.toast.success { border-right:4px solid #52b788; }
-.toast.info { border-right:4px solid var(–gold); }
-
-.loading-overlay {
-position:fixed; inset:0; background:rgba(15,14,13,0.8);
-display:flex; align-items:center; justify-content:center;
-z-index:999; color:#fff; font-size:16px; gap:12px;
-}
-.spinner {
-width:24px; height:24px; border:3px solid rgba(255,255,255,0.3);
-border-top-color:#fff; border-radius:50%;
-animation:spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-
-.plan-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
-.plan-free { background:#e2e3e5; color:#41464b; }
-.plan-pro { background:rgba(201,168,76,0.2); color:#7a5c00; }
-.plan-enterprise { background:#1a1714; color:var(–gold); }
-
-.action-menu { position:relative; display:inline-block; }
-.action-dropdown { position:absolute; left:0; top:100%; background:#fff; border:1px solid var(–border); border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); width:160px; z-index:50; display:none; overflow:hidden; margin-top:4px; }
-.action-dropdown.open { display:block; }
-.action-dropdown button { display:block; width:100%; text-align:right; padding:10px 14px; font-family:‘Heebo’,sans-serif; font-size:13px; border:none; background:transparent; cursor:pointer; transition:background 0.15s; color:var(–ink); direction:rtl; }
-.action-dropdown button:hover { background:var(–paper); }
-.action-dropdown button.danger { color:var(–danger); }
-
-@media (max-width:768px) {
-.sidebar { display:none; }
-.main { margin-right:0; }
-.stats-row { grid-template-columns:1fr 1fr; }
-.content { padding:16px; }
-.topbar { padding:14px 16px; }
-.form-row { grid-template-columns:1fr; }
-}
-
-.doc-preview { background:#fff; border:1px solid var(–border); border-radius:8px; padding:20px; font-size:13px; line-height:1.8; max-height:240px; overflow-y:auto; margin-bottom:16px; }
-.doc-preview h3 { text-align:center; font-size:15px; font-weight:800; margin-bottom:12px; }
-.field-highlight { background:rgba(201,168,76,0.15); padding:1px 5px; border-radius:3px; }
+:root{--ink:#0f0e0d;--paper:#f7f4ef;--warm:#faf8f4;--gold:#c9a84c;--gold-light:#e8d08a;--deep:#1a1714;--mid:#6b6560;--border:#ddd8cf;--success:#2d6a4f;--danger:#8b2020}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);direction:rtl;min-height:100vh}
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--deep) 0%,#2d2520 100%);padding:20px}
+.auth-card{background:var(--warm);border-radius:20px;padding:48px 40px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,0.4)}
+.auth-logo{text-align:center;margin-bottom:32px}
+.auth-logo .brand{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold)}
+.auth-logo .sub{font-size:13px;color:var(--mid);margin-top:4px}
+.auth-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:28px}
+.auth-tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:var(--mid);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s}
+.auth-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Heebo',sans-serif;font-size:14px;background:#fff;direction:rtl;transition:border-color 0.2s}
+.form-input:focus{outline:none;border-color:var(--gold)}
+.btn-auth{width:100%;padding:13px;background:var(--gold);color:var(--deep);border:none;border-radius:8px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}
+.btn-auth:hover{background:var(--gold-light)}
+.auth-error{background:#fee;border:1px solid #fcc;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--danger);margin-bottom:14px;display:none}
+.app{display:none}
+.app-layout{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--deep);color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh;right:0;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sidebar-logo .brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold)}
+.sidebar-logo .sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;font-weight:300}
+.sidebar-section{padding:18px 16px 8px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;transition:all 0.2s;font-size:14px;color:rgba(255,255,255,0.65);border-right:3px solid transparent;margin:1px 0}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:#fff}
+.nav-item.active{background:rgba(201,168,76,0.12);color:var(--gold);border-right-color:var(--gold)}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:20px;border-top:1px solid rgba(255,255,255,0.08)}
+.user-info{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px}
+.user-info strong{display:block;color:rgba(255,255,255,0.85);font-size:13px}
+.btn-logout{width:100%;padding:8px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:none;border-radius:6px;font-family:'Heebo',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s}
+.btn-logout:hover{background:rgba(255,255,255,0.15);color:#fff}
+.main{margin-right:240px;flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--warm);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar h1{font-size:20px;font-weight:700}
+.topbar .breadcrumb{font-size:13px;color:var(--mid);margin-top:2px}
+.btn{padding:9px 20px;border-radius:6px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--gold);color:var(--deep)}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--ink)}
+.btn-ghost{background:transparent;color:var(--mid)}
+.btn-ghost:hover{color:var(--ink);background:rgba(0,0,0,0.05)}
+.content{padding:28px 32px;flex:1}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--warm);border:1px solid var(--border);border-radius:10px;padding:20px}
+.stat-label{font-size:12px;color:var(--mid);font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.stat-value{font-size:28px;font-weight:800;margin-top:6px}
+.stat-value.gold{color:var(--gold)}
+.stat-sub{font-size:12px;color:var(--mid);margin-top:4px}
+.card{background:var(--warm);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.card-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-header h2{font-size:15px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{padding:12px 20px;text-align:right;font-size:11px;letter-spacing:0.8px;text-transform:uppercase;color:var(--mid);font-weight:600;background:rgba(0,0,0,0.02);border-bottom:1px solid var(--border)}
+td{padding:14px 20px;font-size:14px;border-bottom:1px solid rgba(0,0,0,0.04);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(201,168,76,0.04)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-pending{background:#fff3cd;color:#856404}
+.badge-signed{background:#d1e7dd;color:#0f5132}
+.badge-expired{background:#f8d7da;color:#842029}
+.badge-draft{background:#e2e3e5;color:#41464b}
+.empty-state{text-align:center;padding:60px 20px;color:var(--mid)}
+.empty-state .emoji{font-size:48px;margin-bottom:12px}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,14,13,0.65);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity 0.25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--warm);border-radius:16px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.3);transform:translateY(20px);transition:transform 0.25s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-header h2{font-size:18px;font-weight:800}
+.modal-body{padding:24px 28px}
+.modal-footer{padding:18px 28px;border-top:1px solid var(--border);display:flex;gap:10px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-select,.form-textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Heebo',sans-serif;font-size:14px;background:#fff;direction:rtl}
+.doc-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.doc-type-option{border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all 0.2s;font-size:13px;display:flex;align-items:center;gap:8px;background:#fff}
+.doc-type-option:hover{border-color:var(--gold)}
+.doc-type-option.selected{border-color:var(--gold);background:rgba(201,168,76,0.08);font-weight:600}
+.send-method-row{display:flex;gap:8px}
+.send-method-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;text-align:center;font-size:12px;transition:all 0.2s;background:#fff;font-family:'Heebo',sans-serif;font-weight:500}
+.send-method-btn.selected{border-color:var(--gold);background:rgba(201,168,76,0.1);font-weight:700}
+.steps{display:flex;gap:0;border-bottom:1px solid var(--border);padding-bottom:0;margin-bottom:24px}
+.step{display:flex;align-items:center;gap:8px;padding:0 0 14px;margin-left:24px;font-size:13px;color:var(--mid);border-bottom:2px solid transparent;margin-bottom:-1px}
+.step.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+.step.done{color:var(--success)}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.step.active .step-num{background:var(--gold);color:var(--deep)}
+.step.done .step-num{background:var(--success);color:#fff}
+.info-box{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:8px;padding:12px 16px;font-size:13px;color:#7a5c00;display:flex;gap:8px;margin-bottom:16px}
+.doc-preview{background:#fff;border:1px solid var(--border);border-radius:8px;padding:20px;font-size:13px;line-height:1.8;max-height:240px;overflow-y:auto;margin-bottom:16px}
+.doc-preview h3{text-align:center;font-size:15px;font-weight:800;margin-bottom:12px}
+.action-menu{position:relative;display:inline-block}
+.action-dropdown{position:absolute;left:0;top:100%;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);width:160px;z-index:50;display:none;overflow:hidden;margin-top:4px}
+.action-dropdown.open{display:block}
+.action-dropdown button{display:block;width:100%;text-align:right;padding:10px 14px;font-family:'Heebo',sans-serif;font-size:13px;border:none;background:transparent;cursor:pointer;transition:background 0.15s;color:var(--ink);direction:rtl}
+.action-dropdown button:hover{background:var(--paper)}
+.action-dropdown button.danger{color:var(--danger)}
+.plan-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.plan-free{background:#e2e3e5;color:#41464b}
+.plan-pro{background:rgba(201,168,76,0.2);color:#7a5c00}
+.plan-enterprise{background:#1a1714;color:var(--gold)}
+.toast{position:fixed;bottom:24px;left:24px;background:var(--deep);color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:500;display:flex;align-items:center;gap:10px;min-width:260px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-right:4px solid #52b788}
+.toast.info{border-right:4px solid var(--gold)}
+.loading-overlay{position:fixed;inset:0;background:rgba(15,14,13,0.8);display:flex;align-items:center;justify-content:center;z-index:999;color:#fff;font-size:16px;gap:12px}
+.spinner{width:24px;height:24px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:768px){.sidebar{display:none}.main{margin-right:0}.stats-row{grid-template-columns:1fr 1fr}.content{padding:16px}.topbar{padding:14px 16px}.form-row{grid-template-columns:1fr}}
 </style>
-
 </head>
 <body>
-
-<!-- LOADING -->
-
-<div class="loading-overlay" id="loading">
-  <div class="spinner"></div>
-  <span>טוען...</span>
-</div>
-
-<!-- AUTH SCREEN -->
-
+<div class="loading-overlay" id="loading"><div class="spinner"></div><span>טוען...</span></div>
 <div class="auth-screen" id="auth-screen" style="display:none">
   <div class="auth-card">
-    <div class="auth-logo">
-      <div class="brand">BrokerSign</div>
-      <div class="sub">פלטפורמת ניהול נכסים וחתימה דיגיטלית</div>
-    </div>
+    <div class="auth-logo"><div class="brand">BrokerSign</div><div class="sub">פלטפורמת ניהול נכסים וחתימה דיגיטלית</div></div>
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchAuthTab('login')">התחברות</div>
       <div class="auth-tab" onclick="switchAuthTab('register')">הרשמה</div>
     </div>
     <div id="auth-error" class="auth-error"></div>
-
-```
-<!-- LOGIN -->
-<div id="login-form">
-  <div class="form-group">
-    <label class="form-label">אימייל</label>
-    <input class="form-input" id="login-email" type="email" placeholder="your@email.com">
-  </div>
-  <div class="form-group">
-    <label class="form-label">סיסמה</label>
-    <input class="form-input" id="login-password" type="password" placeholder="••••••••">
-  </div>
-  <button class="btn-auth" onclick="login()">כניסה ←</button>
-</div>
-
-<!-- REGISTER -->
-<div id="register-form" style="display:none">
-  <div class="form-row">
-    <div class="form-group">
-      <label class="form-label">שם מלא *</label>
-      <input class="form-input" id="reg-name" placeholder="ישראל ישראלי">
+    <div id="login-form">
+      <div class="form-group"><label class="form-label">אימייל</label><input class="form-input" id="login-email" type="email" placeholder="your@email.com"></div>
+      <div class="form-group"><label class="form-label">סיסמה</label><input class="form-input" id="login-password" type="password" placeholder="••••••••"></div>
+      <button class="btn-auth" onclick="login()">כניסה ←</button>
     </div>
-    <div class="form-group">
-      <label class="form-label">טלפון</label>
-      <input class="form-input" id="reg-phone" placeholder="050-0000000">
+    <div id="register-form" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">שם מלא *</label><input class="form-input" id="reg-name" placeholder="ישראל ישראלי"></div>
+        <div class="form-group"><label class="form-label">טלפון</label><input class="form-input" id="reg-phone" placeholder="050-0000000"></div>
+      </div>
+      <div class="form-group"><label class="form-label">אימייל *</label><input class="form-input" id="reg-email" type="email" placeholder="your@email.com"></div>
+      <div class="form-group"><label class="form-label">סיסמה *</label><input class="form-input" id="reg-password" type="password" placeholder="לפחות 6 תווים"></div>
+      <div class="form-group"><label class="form-label">שם חברה / משרד</label><input class="form-input" id="reg-company" placeholder="משרד תיווך X"></div>
+      <button class="btn-auth" onclick="register()">צור חשבון חינמי ←</button>
     </div>
   </div>
-  <div class="form-group">
-    <label class="form-label">אימייל *</label>
-    <input class="form-input" id="reg-email" type="email" placeholder="your@email.com">
-  </div>
-  <div class="form-group">
-    <label class="form-label">סיסמה *</label>
-    <input class="form-input" id="reg-password" type="password" placeholder="לפחות 6 תווים">
-  </div>
-  <div class="form-group">
-    <label class="form-label">שם חברה / משרד</label>
-    <input class="form-input" id="reg-company" placeholder="משרד תיווך X">
-  </div>
-  <button class="btn-auth" onclick="register()">צור חשבון חינמי ←</button>
 </div>
-```
-
-  </div>
-</div>
-
-<!-- APP -->
-
 <div class="app" id="app">
   <div class="app-layout">
     <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="brand">BrokerSign</div>
-        <div class="sub">פלטפורמת ניהול נכסים</div>
-      </div>
+      <div class="sidebar-logo"><div class="brand">BrokerSign</div><div class="sub">פלטפורמת ניהול נכסים</div></div>
       <div class="sidebar-section">ראשי</div>
       <div class="nav-item" onclick="setPage('dashboard',this)"><span class="icon">📊</span> לוח בקרה</div>
       <div class="sidebar-section">מסמכים</div>
@@ -359,58 +160,32 @@ animation:spin 0.8s linear infinite;
       <div class="nav-item" onclick="setPage('clients',this)"><span class="icon">👥</span> לקוחות</div>
       <div class="nav-item" onclick="setPage('brokers',this)"><span class="icon">🤝</span> שת"פ</div>
       <div class="sidebar-footer">
-        <div class="user-info">
-          <strong id="sidebar-name">טוען...</strong>
-          <span id="sidebar-email"></span>
-          <span id="sidebar-plan" class="plan-badge plan-free" style="margin-top:6px">חינמי</span>
-        </div>
+        <div class="user-info"><strong id="sidebar-name">טוען...</strong><span id="sidebar-email"></span><span id="sidebar-plan" class="plan-badge plan-free" style="margin-top:6px">חינמי</span></div>
         <button class="btn-logout" onclick="logout()">🚪 התנתק</button>
       </div>
     </aside>
-
-```
-<div class="main">
-  <div class="topbar">
-    <div>
-      <h1 id="page-title">חתימות דיגיטליות</h1>
-      <div class="breadcrumb" id="page-breadcrumb">BrokerSign › חתימות</div>
-    </div>
-    <div class="topbar-actions">
-      <button class="btn btn-primary" id="main-action-btn" onclick="openModal('newDoc')">✍️ שלח לחתימה</button>
-    </div>
-  </div>
-
-  <div class="content" id="page-content">
-    <!-- SIGNATURES PAGE -->
-    <div id="page-signatures">
-      <div class="stats-row" id="stats-row">
-        <div class="stat-card"><div class="stat-label">מסמכים נשלחו</div><div class="stat-value" id="stat-total">0</div><div class="stat-sub">סה"כ</div></div>
-        <div class="stat-card"><div class="stat-label">ממתינים</div><div class="stat-value gold" id="stat-pending">0</div><div class="stat-sub">לחתימה</div></div>
-        <div class="stat-card"><div class="stat-label">נחתמו</div><div class="stat-value" style="color:var(--success)" id="stat-signed">0</div><div class="stat-sub">הושלמו</div></div>
-        <div class="stat-card"><div class="stat-label">פג תוקף</div><div class="stat-value" style="color:var(--danger)" id="stat-expired">0</div><div class="stat-sub">לחידוש</div></div>
+    <div class="main">
+      <div class="topbar">
+        <div><h1 id="page-title">חתימות דיגיטליות</h1><div class="breadcrumb" id="page-breadcrumb">BrokerSign › חתימות</div></div>
+        <div><button class="btn btn-primary" id="main-action-btn" onclick="openModal('newDoc')">✍️ שלח לחתימה</button></div>
       </div>
-      <div class="card">
-        <div class="card-header">
-          <h2>מסמכים לחתימה</h2>
+      <div class="content" id="page-content">
+        <div id="page-signatures">
+          <div class="stats-row">
+            <div class="stat-card"><div class="stat-label">מסמכים נשלחו</div><div class="stat-value" id="stat-total">0</div><div class="stat-sub">סה"כ</div></div>
+            <div class="stat-card"><div class="stat-label">ממתינים</div><div class="stat-value gold" id="stat-pending">0</div><div class="stat-sub">לחתימה</div></div>
+            <div class="stat-card"><div class="stat-label">נחתמו</div><div class="stat-value" style="color:var(--success)" id="stat-signed">0</div><div class="stat-sub">הושלמו</div></div>
+            <div class="stat-card"><div class="stat-label">פג תוקף</div><div class="stat-value" style="color:var(--danger)" id="stat-expired">0</div><div class="stat-sub">לחידוש</div></div>
+          </div>
+          <div class="card"><div class="card-header"><h2>מסמכים לחתימה</h2></div><div id="docs-container"></div></div>
         </div>
-        <div id="docs-container"></div>
       </div>
     </div>
   </div>
 </div>
-```
-
-  </div>
-</div>
-
-<!-- MODAL: NEW DOCUMENT -->
-
 <div class="modal-overlay" id="modal-newDoc">
   <div class="modal">
-    <div class="modal-header">
-      <h2>✍️ שליחת מסמך לחתימה</h2>
-      <button class="btn btn-ghost" onclick="closeModal('newDoc')">✕</button>
-    </div>
+    <div class="modal-header"><h2>✍️ שליחת מסמך לחתימה</h2><button class="btn btn-ghost" onclick="closeModal('newDoc')">✕</button></div>
     <div class="modal-body">
       <div class="steps">
         <div class="step active" id="s1"><div class="step-num">1</div> פרטי לקוח</div>
@@ -424,7 +199,7 @@ animation:spin 0.8s linear infinite;
         </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">טלפון</label><input class="form-input" id="f-phone" placeholder="050-0000000"></div>
-          <div class="form-group"><label class="form-label">אימייל</label><input class="form-input" id="f-email" type="email" placeholder="client@email.com"></div>
+          <div class="form-group"><label class="form-label">אימייל *</label><input class="form-input" id="f-email" type="email" placeholder="client@email.com"></div>
         </div>
         <div class="form-group"><label class="form-label">כתובת נכס</label><input class="form-input" id="f-address" placeholder="רחוב, עיר"></div>
       </div>
@@ -449,12 +224,12 @@ animation:spin 0.8s linear infinite;
         <div class="form-group">
           <label class="form-label">שיטת שליחה</label>
           <div class="send-method-row">
-            <button class="send-method-btn selected" onclick="selSend(this,'whatsapp')">📱 WhatsApp</button>
-            <button class="send-method-btn" onclick="selSend(this,'email')">📧 מייל</button>
+            <button class="send-method-btn selected" onclick="selSend(this,'email')">📧 מייל</button>
+            <button class="send-method-btn" onclick="selSend(this,'whatsapp')">📱 WhatsApp</button>
             <button class="send-method-btn" onclick="selSend(this,'sms')">💬 SMS</button>
           </div>
         </div>
-        <div class="info-box">⏰ הלקוח יקבל קישור לחתימה דיגיטלית. החתימה תישמר עם חותמת זמן.</div>
+        <div class="info-box">⏰ הלקוח יקבל מייל עם קישור לחתימה דיגיטלית אישית.</div>
       </div>
     </div>
     <div class="modal-footer">
@@ -464,169 +239,94 @@ animation:spin 0.8s linear infinite;
     </div>
   </div>
 </div>
-
-<!-- MODAL: SIGN -->
-
-<div class="modal-overlay" id="modal-sign">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="sign-modal-title">חתימה על מסמך</h2>
-      <button class="btn btn-ghost" onclick="closeModal('sign')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="info-box">📋 קרא/י את המסמך בעיון לפני החתימה</div>
-      <div class="doc-preview" id="sign-doc-preview"></div>
-      <div class="form-group">
-        <label class="form-label">חתימה</label>
-        <div class="sig-area" id="sig-area">
-          <canvas id="sig-canvas"></canvas>
-          <span class="sig-placeholder" id="sig-ph">חתום/י כאן</span>
-        </div>
-        <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px;margin-top:6px" onclick="clearSig()">🗑 נקה</button>
-      </div>
-      <div class="form-group">
-        <label class="form-label">שם מלא לאישור *</label>
-        <input class="form-input" id="confirm-name" placeholder="הכנס שמך המלא">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" onclick="submitSign()">✅ אני מאשר/ת וחותם/ת</button>
-      <button class="btn btn-ghost" onclick="closeModal('sign')">ביטול</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"><span id="toast-msg"></span></div>
-
 <script>
-// ===== SUPABASE INIT =====
-const SUPABASE_URL = 'https://lrelmsldoqkifmxionnk.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Z9haU6VnacVW52WoW_Qtsw_bZp9Rs9_';
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL='https://lrelmsldoqkifmxionnk.supabase.co';
+const SUPABASE_KEY='sb_publishable_Z9haU6VnacVW52WoW_Qtsw_bZp9Rs9_';
+const RESEND_KEY='re_f4oCuD6M_5gWBBocPRC4zsZeyJLLtG2gM';
+const SIGN_URL='https://brokersign-rho.vercel.app/Sign.html';
+const {createClient}=supabase;
+const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null,currentBroker=null,allDocs=[],currentStep=1,selectedDocType='',selectedSend='email';
 
-let currentUser = null;
-let currentBroker = null;
-let allDocs = [];
-let currentStep = 1;
-let selectedDocType = '';
-let selectedSend = 'whatsapp';
-let currentSignDocId = null;
-let sigCtx, sigCanvas, signing = false, hasSig = false;
-
-// ===== INIT =====
-async function init() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    await loadBroker();
-    showApp();
-  } else {
-    showAuth();
-  }
-  document.getElementById('loading').style.display = 'none';
+async function init(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){currentUser=session.user;await loadBroker();showApp();}
+  else showAuth();
+  document.getElementById('loading').style.display='none';
 }
 
-async function loadBroker() {
-  const { data } = await sb.from('brokers').select('*').eq('auth_id', currentUser.id).single();
-  if (data) {
-    currentBroker = data;
-    document.getElementById('sidebar-name').textContent = data.full_name;
-    document.getElementById('sidebar-email').textContent = data.email;
-    const planEl = document.getElementById('sidebar-plan');
-    planEl.textContent = data.plan === 'free' ? 'חינמי' : data.plan === 'pro' ? 'Pro' : 'Enterprise';
-    planEl.className = `plan-badge plan-${data.plan}`;
+async function loadBroker(){
+  const{data}=await sb.from('brokers').select('*').eq('auth_id',currentUser.id).single();
+  if(data){
+    currentBroker=data;
+    document.getElementById('sidebar-name').textContent=data.full_name;
+    document.getElementById('sidebar-email').textContent=data.email;
+    const pl=document.getElementById('sidebar-plan');
+    pl.textContent=data.plan==='free'?'חינמי':data.plan==='pro'?'Pro':'Enterprise';
+    pl.className='plan-badge plan-'+data.plan;
   }
 }
 
-function showApp() {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  loadDocuments();
+function showApp(){document.getElementById('auth-screen').style.display='none';document.getElementById('app').style.display='block';loadDocuments();}
+function showAuth(){document.getElementById('auth-screen').style.display='flex';document.getElementById('app').style.display='none';}
+
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('login-form').style.display=tab==='login'?'block':'none';
+  document.getElementById('register-form').style.display=tab==='register'?'block':'none';
+  document.getElementById('auth-error').style.display='none';
 }
 
-function showAuth() {
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-}
-
-// ===== AUTH =====
-function switchAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
-  document.getElementById('login-form').style.display = tab==='login'?'block':'none';
-  document.getElementById('register-form').style.display = tab==='register'?'block':'none';
-  document.getElementById('auth-error').style.display = 'none';
-}
-
-async function login() {
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  if (!email || !password) { showAuthError('נא למלא אימייל וסיסמה'); return; }
+async function login(){
+  const email=document.getElementById('login-email').value.trim();
+  const password=document.getElementById('login-password').value;
+  if(!email||!password){showAuthError('נא למלא אימייל וסיסמה');return;}
   showLoading();
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  const{data,error}=await sb.auth.signInWithPassword({email,password});
   hideLoading();
-  if (error) { showAuthError('אימייל או סיסמה שגויים'); return; }
-  currentUser = data.user;
-  await loadBroker();
-  showApp();
+  if(error){showAuthError('אימייל או סיסמה שגויים');return;}
+  currentUser=data.user;await loadBroker();showApp();
 }
 
-async function register() {
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const password = document.getElementById('reg-password').value;
-  const phone = document.getElementById('reg-phone').value.trim();
-  const company = document.getElementById('reg-company').value.trim();
-  if (!name || !email || !password) { showAuthError('נא למלא שם, אימייל וסיסמה'); return; }
-  if (password.length < 6) { showAuthError('הסיסמה חייבת להיות לפחות 6 תווים'); return; }
+async function register(){
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const password=document.getElementById('reg-password').value;
+  const phone=document.getElementById('reg-phone').value.trim();
+  const company=document.getElementById('reg-company').value.trim();
+  if(!name||!email||!password){showAuthError('נא למלא שם, אימייל וסיסמה');return;}
+  if(password.length<6){showAuthError('הסיסמה חייבת להיות לפחות 6 תווים');return;}
   showLoading();
-  const { data, error } = await sb.auth.signUp({ email, password });
-  if (error) { hideLoading(); showAuthError(error.message); return; }
-  // Create broker profile
-  await sb.from('brokers').insert({ auth_id: data.user.id, full_name: name, email, phone, company_name: company, plan: 'free' });
-  hideLoading();
-  currentUser = data.user;
-  await loadBroker();
-  showApp();
-  showToast('🎉 ברוך הבא ל-BrokerSign!', 'success');
+  const{data,error}=await sb.auth.signUp({email,password});
+  if(error){hideLoading();showAuthError(error.message);return;}
+  await sb.from('brokers').insert({auth_id:data.user.id,full_name:name,email,phone,company_name:company,plan:'free'});
+  hideLoading();currentUser=data.user;await loadBroker();showApp();
+  showToast('🎉 ברוך הבא ל-BrokerSign!','success');
 }
 
-async function logout() {
-  await sb.auth.signOut();
-  currentUser = null; currentBroker = null;
-  showAuth();
+async function logout(){await sb.auth.signOut();currentUser=null;currentBroker=null;showAuth();}
+function showAuthError(msg){const el=document.getElementById('auth-error');el.textContent=msg;el.style.display='block';}
+
+async function loadDocuments(){
+  if(!currentBroker)return;
+  const{data}=await sb.from('documents').select('*').eq('broker_id',currentBroker.id).order('created_at',{ascending:false});
+  allDocs=data||[];renderDocs();updateStats();
 }
 
-function showAuthError(msg) {
-  const el = document.getElementById('auth-error');
-  el.textContent = msg; el.style.display = 'block';
+function updateStats(){
+  document.getElementById('stat-total').textContent=allDocs.length;
+  document.getElementById('stat-pending').textContent=allDocs.filter(d=>d.status==='pending').length;
+  document.getElementById('stat-signed').textContent=allDocs.filter(d=>d.status==='signed').length;
+  document.getElementById('stat-expired').textContent=allDocs.filter(d=>d.status==='expired').length;
 }
 
-// ===== DOCUMENTS =====
-async function loadDocuments() {
-  if (!currentBroker) return;
-  const { data } = await sb.from('documents').select('*').eq('broker_id', currentBroker.id).order('created_at', { ascending: false });
-  allDocs = data || [];
-  renderDocs();
-  updateStats();
-}
-
-function updateStats() {
-  document.getElementById('stat-total').textContent = allDocs.length;
-  document.getElementById('stat-pending').textContent = allDocs.filter(d=>d.status==='pending').length;
-  document.getElementById('stat-signed').textContent = allDocs.filter(d=>d.status==='signed').length;
-  document.getElementById('stat-expired').textContent = allDocs.filter(d=>d.status==='expired').length;
-}
-
-function renderDocs() {
-  const container = document.getElementById('docs-container');
-  if (allDocs.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>אין מסמכים עדיין</p><p style="font-size:13px;margin-top:8px">לחץ על "שלח לחתימה" להתחיל</p></div>`;
-    return;
-  }
-  const typeMap = { exclusivity:'הסכם בלעדיות', management:'הסכם ניהול נכס', memorandum:'זיכרון דברים', poa:'ייפוי כוח' };
-  container.innerHTML = `<table><thead><tr><th>מסמך</th><th>לקוח</th><th>נכס</th><th>נשלח</th><th>סטטוס</th><th>פעולות</th></tr></thead><tbody>
-    ${allDocs.map(d => `<tr>
+function renderDocs(){
+  const container=document.getElementById('docs-container');
+  if(allDocs.length===0){container.innerHTML='<div class="empty-state"><div class="emoji">📭</div><p>אין מסמכים עדיין</p><p style="font-size:13px;margin-top:8px">לחץ על "שלח לחתימה" להתחיל</p></div>';return;}
+  const typeMap={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח',buyer_agency:'הסכם תיווך – קונה'};
+  container.innerHTML=`<table><thead><tr><th>מסמך</th><th>לקוח</th><th>נכס</th><th>נשלח</th><th>סטטוס</th><th>פעולות</th></tr></thead><tbody>
+    ${allDocs.map(d=>`<tr>
       <td><strong>${typeMap[d.document_type]||d.document_type}</strong></td>
       <td>${d.title}</td>
       <td style="font-size:12px;color:var(--mid)">${d.notes||'—'}</td>
@@ -636,8 +336,8 @@ function renderDocs() {
         <div class="action-menu">
           <button class="btn btn-ghost" style="padding:5px 10px;font-size:13px" onclick="toggleMenu(event,'am-${d.id}')">⋯</button>
           <div class="action-dropdown" id="am-${d.id}">
-            ${d.status==='pending'?`<button onclick="openSignView('${d.id}')">👁 תצוגת חתימה</button>`:''}
-            <button onclick="remindDoc('${d.id}')">📲 תזכורת</button>
+            <button onclick="copySignLink('${d.signing_token}')">🔗 העתק קישור חתימה</button>
+            ${d.status==='pending'?`<button onclick="resendEmail('${d.id}')">📧 שלח מייל מחדש</button>`:''}
             <button class="danger" onclick="deleteDoc('${d.id}')">🗑 מחק</button>
           </div>
         </div>
@@ -646,203 +346,145 @@ function renderDocs() {
   </tbody></table>`;
 }
 
-function badgeHTML(status) {
-  const m = { pending:['badge-pending','⏳ ממתין'], signed:['badge-signed','✅ נחתם'], expired:['badge-expired','❌ פג תוקף'], draft:['badge-draft','📝 טיוטה'] };
-  const [c,l] = m[status]||['badge-draft','?'];
+function badgeHTML(status){
+  const m={pending:['badge-pending','⏳ ממתין'],signed:['badge-signed','✅ נחתם'],expired:['badge-expired','❌ פג תוקף'],draft:['badge-draft','📝 טיוטה']};
+  const[c,l]=m[status]||['badge-draft','?'];
   return `<span class="badge ${c}">${l}</span>`;
 }
 
-// ===== SEND DOCUMENT =====
-async function sendDocument() {
-  const name = document.getElementById('f-name').value.trim();
-  const title = name;
-  const address = document.getElementById('f-address').value.trim();
-  const expire = document.getElementById('f-expire').value;
-  showLoading();
-  const expireDate = expire ? new Date(expire) : new Date(Date.now() + 90*24*60*60*1000);
-  const { error } = await sb.from('documents').insert({
-    broker_id: currentBroker.id,
-    document_type: selectedDocType,
-    title: title,
-    status: 'pending',
-    send_method: selectedSend,
-    notes: address,
-    fee_percent: document.getElementById('f-fee').value,
-    start_date: document.getElementById('f-start').value || null,
-    expire_date: expire || null,
-    token_expires_at: expireDate.toISOString(),
-    content: {
-      client_name: name,
-      client_id: document.getElementById('f-id').value,
-      client_phone: document.getElementById('f-phone').value,
-      client_email: document.getElementById('f-email').value,
-    }
-  });
-  hideLoading();
-  if (error) { showToast('שגיאה בשמירה: ' + error.message, 'info'); return; }
-  closeModal('newDoc');
-  await loadDocuments();
-  const methodLabel = { whatsapp:'📱 WhatsApp', email:'📧 מייל', sms:'💬 SMS' }[selectedSend];
-  showToast(`✅ המסמך נשלח ל-${name} דרך ${methodLabel}`, 'success');
+function copySignLink(token){
+  const link=`${SIGN_URL}?token=${token}`;
+  navigator.clipboard.writeText(link).then(()=>showToast('🔗 קישור החתימה הועתק!','success')).catch(()=>showToast(link,'info'));
+  document.querySelectorAll('.action-dropdown').forEach(m=>m.classList.remove('open'));
 }
 
-// ===== STEPS =====
-function nextStep() {
-  if (currentStep === 1) {
-    if (!document.getElementById('f-name').value.trim()) { showToast('⚠️ נא להכניס שם לקוח','info'); return; }
-    goStep(2);
-  } else if (currentStep === 2) {
-    if (!selectedDocType) { showToast('⚠️ נא לבחור סוג מסמך','info'); return; }
-    buildPreview();
-    goStep(3);
-    document.getElementById('next-btn').textContent = '📤 שלח לחתימה';
-  } else {
-    sendDocument();
-  }
+async function resendEmail(docId){
+  const doc=allDocs.find(d=>d.id===docId);
+  if(!doc||!doc.content?.client_email){showToast('⚠️ אין אימייל ללקוח','info');return;}
+  await sendEmailForDoc(doc);
+  showToast('📧 המייל נשלח מחדש!','success');
+  document.querySelectorAll('.action-dropdown').forEach(m=>m.classList.remove('open'));
 }
-function prevStep() {
-  if (currentStep === 2) goStep(1);
-  else if (currentStep === 3) { goStep(2); document.getElementById('next-btn').textContent = 'המשך ←'; }
+
+async function sendEmailForDoc(doc){
+  const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח',buyer_agency:'הסכם תיווך – לקוח קונה'};
+  const typeName=typeNames[doc.document_type]||doc.document_type;
+  const signingLink=`${SIGN_URL}?token=${doc.signing_token}`;
+  const brokerName=currentBroker?.full_name||'המתווך';
+  const clientName=doc.content?.client_name||doc.title||'לקוח יקר';
+  const expireDate=doc.expire_date?new Date(doc.expire_date).toLocaleDateString('he-IL'):'90 יום';
+  try{
+    await fetch('https://api.resend.com/emails',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+RESEND_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({
+        from:'BrokerSign <onboarding@resend.dev>',
+        to:[doc.content.client_email],
+        subject:`${brokerName} שלח/ה לך מסמך לחתימה – ${typeName}`,
+        html:`<div dir="rtl" style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#0f0e0d">
+          <div style="background:#1a1714;padding:20px 24px;border-radius:12px 12px 0 0;text-align:center">
+            <h1 style="color:#c9a84c;font-size:24px;margin:0">BrokerSign</h1>
+            <p style="color:rgba(255,255,255,0.6);margin:6px 0 0;font-size:13px">פלטפורמת חתימה דיגיטלית</p>
+          </div>
+          <div style="background:#faf8f4;padding:32px;border:1px solid #ddd8cf;border-top:none;border-radius:0 0 12px 12px">
+            <p style="font-size:16px;margin-bottom:8px">שלום <strong>${clientName}</strong>,</p>
+            <p style="color:#6b6560;margin-bottom:24px;line-height:1.6">${brokerName} שלח/ה לך <strong>${typeName}</strong> לחתימה דיגיטלית.</p>
+            <div style="background:#fff;border:1px solid #ddd8cf;border-radius:10px;padding:16px;margin-bottom:24px">
+              <p style="margin:0 0 6px;font-size:12px;color:#6b6560;text-transform:uppercase">פרטי המסמך</p>
+              <p style="margin:4px 0"><strong>סוג:</strong> ${typeName}</p>
+              <p style="margin:4px 0"><strong>נכס:</strong> ${doc.notes||'—'}</p>
+              <p style="margin:4px 0"><strong>דמי תיווך:</strong> ${doc.fee_percent||'—'}</p>
+            </div>
+            <div style="text-align:center;margin-bottom:24px">
+              <a href="${signingLink}" style="background:#c9a84c;color:#1a1714;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:700;font-size:16px;display:inline-block">✍️ לחתימה על המסמך</a>
+            </div>
+            <p style="font-size:12px;color:#6b6560;text-align:center">הקישור תקף עד ${expireDate}. לשאלות פנה/י ל-${brokerName}.</p>
+          </div>
+        </div>`
+      })
+    });
+  }catch(e){console.log('Email error:',e);}
 }
-function goStep(n) {
+
+async function sendDocument(){
+  const name=document.getElementById('f-name').value.trim();
+  const clientEmail=document.getElementById('f-email').value.trim();
+  const address=document.getElementById('f-address').value.trim();
+  const expire=document.getElementById('f-expire').value;
+  showLoading();
+  const expireDate=expire?new Date(expire):new Date(Date.now()+90*24*60*60*1000);
+  const{data:newDoc,error}=await sb.from('documents').insert({
+    broker_id:currentBroker.id,
+    document_type:selectedDocType,
+    title:name,status:'pending',
+    send_method:selectedSend,
+    notes:address,
+    fee_percent:document.getElementById('f-fee').value,
+    start_date:document.getElementById('f-start').value||null,
+    expire_date:expire||null,
+    token_expires_at:expireDate.toISOString(),
+    content:{client_name:name,client_id:document.getElementById('f-id').value,client_phone:document.getElementById('f-phone').value,client_email:clientEmail}
+  }).select().single();
+  if(error){hideLoading();showToast('שגיאה: '+error.message,'info');return;}
+  if(clientEmail&&selectedSend==='email') await sendEmailForDoc(newDoc);
+  hideLoading();closeModal('newDoc');await loadDocuments();
+  showToast(clientEmail?`✅ מייל נשלח ל-${name}!`:`✅ המסמך נשמר בהצלחה`,'success');
+}
+
+function nextStep(){
+  if(currentStep===1){if(!document.getElementById('f-name').value.trim()){showToast('⚠️ נא להכניס שם לקוח','info');return;}goStep(2);}
+  else if(currentStep===2){if(!selectedDocType){showToast('⚠️ נא לבחור סוג מסמך','info');return;}buildPreview();goStep(3);document.getElementById('next-btn').textContent='📤 שלח לחתימה';}
+  else sendDocument();
+}
+function prevStep(){if(currentStep===2)goStep(1);else if(currentStep===3){goStep(2);document.getElementById('next-btn').textContent='המשך ←';}}
+function goStep(n){
   document.getElementById('step'+currentStep).style.display='none';
   document.getElementById('s'+currentStep).classList.remove('active');
-  if(n>currentStep) document.getElementById('s'+currentStep).classList.add('done');
+  if(n>currentStep)document.getElementById('s'+currentStep).classList.add('done');
   currentStep=n;
   document.getElementById('step'+n).style.display='block';
   document.getElementById('s'+n).classList.add('active');
   document.getElementById('back-btn').style.display=n>1?'inline-flex':'none';
 }
-function resetSteps() {
-  currentStep=1; selectedDocType='';
+function resetSteps(){
+  currentStep=1;selectedDocType='';
   ['f-name','f-id','f-phone','f-email','f-address','f-fee'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('.doc-type-option').forEach(o=>o.classList.remove('selected'));
   document.querySelectorAll('.send-method-btn').forEach((b,i)=>b.classList.toggle('selected',i===0));
-  selectedSend='whatsapp';
+  selectedSend='email';
   for(let i=1;i<=3;i++){
-    const el=document.getElementById('step'+i); if(el) el.style.display=i===1?'block':'none';
-    const s=document.getElementById('s'+i); if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
+    const el=document.getElementById('step'+i);if(el)el.style.display=i===1?'block':'none';
+    const s=document.getElementById('s'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
   }
   document.getElementById('next-btn').textContent='המשך ←';
   document.getElementById('back-btn').style.display='none';
 }
-function selectDoc(el, type) {
-  document.querySelectorAll('.doc-type-option').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected'); selectedDocType=type;
-}
-function selSend(el, method) {
-  document.querySelectorAll('.send-method-btn').forEach(b=>b.classList.remove('selected'));
-  el.classList.add('selected'); selectedSend=method;
-}
-function buildPreview() {
+function selectDoc(el,type){document.querySelectorAll('.doc-type-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selectedDocType=type;}
+function selSend(el,method){document.querySelectorAll('.send-method-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');selectedSend=method;}
+function buildPreview(){
   const name=document.getElementById('f-name').value;
   const addr=document.getElementById('f-address').value;
   const fee=document.getElementById('f-fee').value||'2%';
   const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח'};
-  document.getElementById('doc-preview').innerHTML=`
-    <h3>${typeNames[selectedDocType]}</h3>
-    <p>לקוח: <span class="field-highlight">${name}</span></p>
-    <p>נכס: <span class="field-highlight">${addr||'לא צוין'}</span></p>
-    <p>דמי תיווך: <span class="field-highlight">${fee}</span></p>
-    <p>תאריך: <span class="field-highlight">${new Date().toLocaleDateString('he-IL')}</span></p>
-    <p style="margin-top:12px;font-size:12px;color:var(--mid)">המסמך יישלח עם קישור לחתימה דיגיטלית</p>`;
+  document.getElementById('doc-preview').innerHTML=`<h3>${typeNames[selectedDocType]}</h3><p>לקוח: <strong>${name}</strong></p><p>נכס: <strong>${addr||'לא צוין'}</strong></p><p>דמי תיווך: <strong>${fee}</strong></p><p>תאריך: <strong>${new Date().toLocaleDateString('he-IL')}</strong></p>`;
 }
-
-// ===== SIGN =====
-function openSignView(docId) {
-  const doc = allDocs.find(d=>d.id===docId);
-  if (!doc) return;
-  const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח'};
-  document.getElementById('sign-modal-title').textContent = `✍️ ${typeNames[doc.document_type]}`;
-  document.getElementById('sign-doc-preview').innerHTML = `
-    <h3>${typeNames[doc.document_type]}</h3>
-    <p>לקוח: <span class="field-highlight">${doc.title}</span></p>
-    <p>נכס: <span class="field-highlight">${doc.notes||'—'}</span></p>
-    <p>דמי תיווך: <span class="field-highlight">${doc.fee_percent||'—'}</span></p>`;
-  currentSignDocId = docId;
-  openModal('sign');
-  setTimeout(initSig, 100);
-}
-function initSig() {
-  sigCanvas=document.getElementById('sig-canvas');
-  const area=document.getElementById('sig-area');
-  sigCanvas.width=area.offsetWidth; sigCanvas.height=area.offsetHeight;
-  sigCtx=sigCanvas.getContext('2d');
-  sigCtx.strokeStyle='#0f0e0d'; sigCtx.lineWidth=2.5; sigCtx.lineCap='round';
-  const pos=e=>{const r=sigCanvas.getBoundingClientRect();return e.touches?{x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}:{x:e.clientX-r.left,y:e.clientY-r.top};};
-  sigCanvas.onmousedown=sigCanvas.ontouchstart=e=>{e.preventDefault();signing=true;hasSig=true;document.getElementById('sig-ph').style.display='none';const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};
-  sigCanvas.onmousemove=sigCanvas.ontouchmove=e=>{e.preventDefault();if(!signing)return;const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();};
-  sigCanvas.onmouseup=sigCanvas.ontouchend=()=>{signing=false;};
-}
-function clearSig() {
-  if(!sigCtx)return;
-  sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);
-  hasSig=false; document.getElementById('sig-ph').style.display='';
-}
-async function submitSign() {
-  const name=document.getElementById('confirm-name').value.trim();
-  if(!hasSig){showToast('⚠️ נא לחתום','info');return;}
-  if(!name){showToast('⚠️ נא להכניס שם','info');return;}
-  const sigImage=sigCanvas.toDataURL();
-  showLoading();
-  const {error}=await sb.from('documents').update({
-    status:'signed', signed_at:new Date().toISOString(),
-    signature_image:sigImage, signer_name_confirmed:name
-  }).eq('id',currentSignDocId);
-  hideLoading();
-  if(error){showToast('שגיאה: '+error.message,'info');return;}
-  closeModal('sign');
-  await loadDocuments();
-  showToast(`✅ ${name} חתם/ה בהצלחה!`,'success');
-}
-
-// ===== ACTIONS =====
-function remindDoc(id) { showToast('📲 תזכורת נשלחה','success'); }
-async function deleteDoc(id) {
-  if(!confirm('למחוק את המסמך?'))return;
-  await sb.from('documents').delete().eq('id',id);
-  await loadDocuments();
-  showToast('🗑 המסמך נמחק','info');
-}
-function toggleMenu(e,id) {
-  e.stopPropagation();
-  document.querySelectorAll('.action-dropdown').forEach(m=>{if(m.id!==id)m.classList.remove('open');});
-  document.getElementById(id).classList.toggle('open');
-}
+async function deleteDoc(id){if(!confirm('למחוק את המסמך?'))return;await sb.from('documents').delete().eq('id',id);await loadDocuments();showToast('🗑 המסמך נמחק','info');}
+function toggleMenu(e,id){e.stopPropagation();document.querySelectorAll('.action-dropdown').forEach(m=>{if(m.id!==id)m.classList.remove('open');});document.getElementById(id).classList.toggle('open');}
 document.addEventListener('click',()=>document.querySelectorAll('.action-dropdown').forEach(m=>m.classList.remove('open')));
-
-// ===== MODAL =====
-function openModal(id) { document.getElementById('modal-'+id).classList.add('open'); document.body.style.overflow='hidden'; if(id==='newDoc')resetSteps(); }
-function closeModal(id) { document.getElementById('modal-'+id).classList.remove('open'); document.body.style.overflow=''; }
-
-// ===== PAGE NAV =====
-function setPage(page, el) {
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if(el)el.classList.add('active');
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');document.body.style.overflow='hidden';if(id==='newDoc')resetSteps();}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');document.body.style.overflow='';}
+function setPage(page,el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');
   const titles={dashboard:'לוח בקרה',signatures:'חתימות דיגיטליות',properties:'ניהול נכסים',clients:'ניהול לקוחות',brokers:'שיתופי פעולה'};
   document.getElementById('page-title').textContent=titles[page]||page;
-  document.getElementById('page-breadcrumb').textContent=`BrokerSign › ${titles[page]||page}`;
-  if(page==='signatures'){
-    document.getElementById('page-signatures').style.display='block';
-    document.getElementById('main-action-btn').style.display='';
-    const cs=document.getElementById('coming-soon');if(cs)cs.remove();
-  } else {
-    document.getElementById('page-signatures').style.display='none';
-    document.getElementById('main-action-btn').style.display='none';
-    let cs=document.getElementById('coming-soon');
-    if(!cs){cs=document.createElement('div');cs.id='coming-soon';document.getElementById('page-content').appendChild(cs);}
-    cs.innerHTML=`<div class="empty-state" style="padding:80px 20px"><div class="emoji">🚧</div><p style="font-size:18px;font-weight:700;margin-bottom:8px">${titles[page]}</p><p>בפיתוח – יהיה זמין בקרוב</p></div>`;
-  }
+  document.getElementById('page-breadcrumb').textContent='BrokerSign › '+(titles[page]||page);
+  if(page==='signatures'){document.getElementById('page-signatures').style.display='block';document.getElementById('main-action-btn').style.display='';const cs=document.getElementById('coming-soon');if(cs)cs.remove();}
+  else{document.getElementById('page-signatures').style.display='none';document.getElementById('main-action-btn').style.display='none';let cs=document.getElementById('coming-soon');if(!cs){cs=document.createElement('div');cs.id='coming-soon';document.getElementById('page-content').appendChild(cs);}cs.innerHTML=`<div class="empty-state" style="padding:80px 20px"><div class="emoji">🚧</div><p style="font-size:18px;font-weight:700;margin-bottom:8px">${titles[page]}</p><p>בפיתוח – יהיה זמין בקרוב</p></div>`;}
 }
-
-// ===== UTILS =====
 function showToast(msg,type='success'){const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;t.className='toast show '+type;setTimeout(()=>t.classList.remove('show'),3500);}
 function showLoading(){document.getElementById('loading').style.display='flex';}
 function hideLoading(){document.getElementById('loading').style.display='none';}
-
-// ===== START =====
 init();
 </script>
-
 </body>
 </html>
