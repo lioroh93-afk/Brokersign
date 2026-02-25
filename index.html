@@ -82,7 +82,6 @@ tr:hover td{background:rgba(201,168,76,0.04)}
 .modal-body{padding:24px 28px}
 .modal-footer{padding:18px 28px;border-top:1px solid var(--border);display:flex;gap:10px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.form-select,.form-textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Heebo',sans-serif;font-size:14px;background:#fff;direction:rtl}
 .doc-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
 .doc-type-option{border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all 0.2s;font-size:13px;display:flex;align-items:center;gap:8px;background:#fff}
 .doc-type-option:hover{border-color:var(--gold)}
@@ -90,7 +89,7 @@ tr:hover td{background:rgba(201,168,76,0.04)}
 .send-method-row{display:flex;gap:8px}
 .send-method-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;text-align:center;font-size:12px;transition:all 0.2s;background:#fff;font-family:'Heebo',sans-serif;font-weight:500}
 .send-method-btn.selected{border-color:var(--gold);background:rgba(201,168,76,0.1);font-weight:700}
-.steps{display:flex;gap:0;border-bottom:1px solid var(--border);padding-bottom:0;margin-bottom:24px}
+.steps{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px}
 .step{display:flex;align-items:center;gap:8px;padding:0 0 14px;margin-left:24px;font-size:13px;color:var(--mid);border-bottom:2px solid transparent;margin-bottom:-1px}
 .step.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
 .step.done{color:var(--success)}
@@ -109,7 +108,6 @@ tr:hover td{background:rgba(201,168,76,0.04)}
 .plan-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .plan-free{background:#e2e3e5;color:#41464b}
 .plan-pro{background:rgba(201,168,76,0.2);color:#7a5c00}
-.plan-enterprise{background:#1a1714;color:var(--gold)}
 .toast{position:fixed;bottom:24px;left:24px;background:var(--deep);color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:500;display:flex;align-items:center;gap:10px;min-width:260px}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.success{border-right:4px solid #52b788}
@@ -199,7 +197,7 @@ tr:hover td{background:rgba(201,168,76,0.04)}
         </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">טלפון</label><input class="form-input" id="f-phone" placeholder="050-0000000"></div>
-          <div class="form-group"><label class="form-label">אימייל *</label><input class="form-input" id="f-email" type="email" placeholder="client@email.com"></div>
+          <div class="form-group"><label class="form-label">אימייל</label><input class="form-input" id="f-email" type="email" placeholder="client@email.com"></div>
         </div>
         <div class="form-group"><label class="form-label">כתובת נכס</label><input class="form-input" id="f-address" placeholder="רחוב, עיר"></div>
       </div>
@@ -213,11 +211,19 @@ tr:hover td{background:rgba(201,168,76,0.04)}
             <div class="doc-type-option" onclick="selectDoc(this,'poa')">⚖️ ייפוי כוח</div>
           </div>
         </div>
+        <div class="form-group" id="deal-type-group" style="display:none">
+          <label class="form-label">סוג העסקה</label>
+          <div class="send-method-row">
+            <button class="send-method-btn selected" onclick="selDealType(this,'sale')">🏷️ מכירה</button>
+            <button class="send-method-btn" onclick="selDealType(this,'rent')">🔑 השכרה</button>
+            <button class="send-method-btn" onclick="selDealType(this,'both')">🏠 שניהם</button>
+          </div>
+        </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">תאריך תחילה</label><input class="form-input" id="f-start" type="date"></div>
           <div class="form-group"><label class="form-label">תאריך פקיעה</label><input class="form-input" id="f-expire" type="date"></div>
         </div>
-        <div class="form-group"><label class="form-label">דמי תיווך / עמלה</label><input class="form-input" id="f-fee" placeholder='2% + מע"מ'></div>
+        <div class="form-group"><label class="form-label">דמי תיווך</label><input class="form-input" id="f-fee" placeholder='2% + מע"מ'></div>
       </div>
       <div id="step3" style="display:none">
         <div class="doc-preview" id="doc-preview"></div>
@@ -229,7 +235,7 @@ tr:hover td{background:rgba(201,168,76,0.04)}
             <button class="send-method-btn" onclick="selSend(this,'sms')">💬 SMS</button>
           </div>
         </div>
-        <div class="info-box">⏰ הלקוח יקבל מייל עם קישור לחתימה דיגיטלית אישית.</div>
+        <div class="info-box">⏰ הלקוח יקבל קישור לחתימה דיגיטלית.</div>
       </div>
     </div>
     <div class="modal-footer">
@@ -243,11 +249,20 @@ tr:hover td{background:rgba(201,168,76,0.04)}
 <script>
 const SUPABASE_URL='https://lrelmsldoqkifmxionnk.supabase.co';
 const SUPABASE_KEY='sb_publishable_Z9haU6VnacVW52WoW_Qtsw_bZp9Rs9_';
-const RESEND_KEY='re_f4oCuD6M_5gWBBocPRC4zsZeyJLLtG2gM';
 const SIGN_URL='https://brokersign-rho.vercel.app/Sign.html';
 const {createClient}=supabase;
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
-let currentUser=null,currentBroker=null,allDocs=[],currentStep=1,selectedDocType='',selectedSend='email';
+let currentUser=null,currentBroker=null,allDocs=[],currentStep=1,selectedDocType='',selectedSend='email',selectedDealType='sale';
+
+async function sendEmail(to,subject,html){
+  try{
+    await fetch('/api/send-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({to,subject,html})
+    });
+  }catch(e){console.log('Email error:',e);}
+}
 
 async function init(){
   const{data:{session}}=await sb.auth.getSession();
@@ -325,9 +340,10 @@ function renderDocs(){
   const container=document.getElementById('docs-container');
   if(allDocs.length===0){container.innerHTML='<div class="empty-state"><div class="emoji">📭</div><p>אין מסמכים עדיין</p><p style="font-size:13px;margin-top:8px">לחץ על "שלח לחתימה" להתחיל</p></div>';return;}
   const typeMap={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח',buyer_agency:'הסכם תיווך – קונה'};
+  const dealMap={sale:'מכירה',rent:'השכרה',both:'מכירה+השכרה'};
   container.innerHTML=`<table><thead><tr><th>מסמך</th><th>לקוח</th><th>נכס</th><th>נשלח</th><th>סטטוס</th><th>פעולות</th></tr></thead><tbody>
     ${allDocs.map(d=>`<tr>
-      <td><strong>${typeMap[d.document_type]||d.document_type}</strong></td>
+      <td><strong>${typeMap[d.document_type]||d.document_type}</strong>${d.content?.deal_type?`<br><span style="font-size:11px;color:var(--mid)">${dealMap[d.content.deal_type]||''}</span>`:''}</td>
       <td>${d.title}</td>
       <td style="font-size:12px;color:var(--mid)">${d.notes||'—'}</td>
       <td style="font-size:12px">${new Date(d.created_at).toLocaleDateString('he-IL')}</td>
@@ -337,7 +353,6 @@ function renderDocs(){
           <button class="btn btn-ghost" style="padding:5px 10px;font-size:13px" onclick="toggleMenu(event,'am-${d.id}')">⋯</button>
           <div class="action-dropdown" id="am-${d.id}">
             <button onclick="copySignLink('${d.signing_token}')">🔗 העתק קישור חתימה</button>
-            ${d.status==='pending'?`<button onclick="resendEmail('${d.id}')">📧 שלח מייל מחדש</button>`:''}
             <button class="danger" onclick="deleteDoc('${d.id}')">🗑 מחק</button>
           </div>
         </div>
@@ -358,54 +373,6 @@ function copySignLink(token){
   document.querySelectorAll('.action-dropdown').forEach(m=>m.classList.remove('open'));
 }
 
-async function resendEmail(docId){
-  const doc=allDocs.find(d=>d.id===docId);
-  if(!doc||!doc.content?.client_email){showToast('⚠️ אין אימייל ללקוח','info');return;}
-  await sendEmailForDoc(doc);
-  showToast('📧 המייל נשלח מחדש!','success');
-  document.querySelectorAll('.action-dropdown').forEach(m=>m.classList.remove('open'));
-}
-
-async function sendEmailForDoc(doc){
-  const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח',buyer_agency:'הסכם תיווך – לקוח קונה'};
-  const typeName=typeNames[doc.document_type]||doc.document_type;
-  const signingLink=`${SIGN_URL}?token=${doc.signing_token}`;
-  const brokerName=currentBroker?.full_name||'המתווך';
-  const clientName=doc.content?.client_name||doc.title||'לקוח יקר';
-  const expireDate=doc.expire_date?new Date(doc.expire_date).toLocaleDateString('he-IL'):'90 יום';
-  try{
-    await fetch('https://api.resend.com/emails',{
-      method:'POST',
-      headers:{'Authorization':'Bearer '+RESEND_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({
-        from:'BrokerSign <onboarding@resend.dev>',
-        to:[doc.content.client_email],
-        subject:`${brokerName} שלח/ה לך מסמך לחתימה – ${typeName}`,
-        html:`<div dir="rtl" style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#0f0e0d">
-          <div style="background:#1a1714;padding:20px 24px;border-radius:12px 12px 0 0;text-align:center">
-            <h1 style="color:#c9a84c;font-size:24px;margin:0">BrokerSign</h1>
-            <p style="color:rgba(255,255,255,0.6);margin:6px 0 0;font-size:13px">פלטפורמת חתימה דיגיטלית</p>
-          </div>
-          <div style="background:#faf8f4;padding:32px;border:1px solid #ddd8cf;border-top:none;border-radius:0 0 12px 12px">
-            <p style="font-size:16px;margin-bottom:8px">שלום <strong>${clientName}</strong>,</p>
-            <p style="color:#6b6560;margin-bottom:24px;line-height:1.6">${brokerName} שלח/ה לך <strong>${typeName}</strong> לחתימה דיגיטלית.</p>
-            <div style="background:#fff;border:1px solid #ddd8cf;border-radius:10px;padding:16px;margin-bottom:24px">
-              <p style="margin:0 0 6px;font-size:12px;color:#6b6560;text-transform:uppercase">פרטי המסמך</p>
-              <p style="margin:4px 0"><strong>סוג:</strong> ${typeName}</p>
-              <p style="margin:4px 0"><strong>נכס:</strong> ${doc.notes||'—'}</p>
-              <p style="margin:4px 0"><strong>דמי תיווך:</strong> ${doc.fee_percent||'—'}</p>
-            </div>
-            <div style="text-align:center;margin-bottom:24px">
-              <a href="${signingLink}" style="background:#c9a84c;color:#1a1714;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:700;font-size:16px;display:inline-block">✍️ לחתימה על המסמך</a>
-            </div>
-            <p style="font-size:12px;color:#6b6560;text-align:center">הקישור תקף עד ${expireDate}. לשאלות פנה/י ל-${brokerName}.</p>
-          </div>
-        </div>`
-      })
-    });
-  }catch(e){console.log('Email error:',e);}
-}
-
 async function sendDocument(){
   const name=document.getElementById('f-name').value.trim();
   const clientEmail=document.getElementById('f-email').value.trim();
@@ -419,16 +386,39 @@ async function sendDocument(){
     title:name,status:'pending',
     send_method:selectedSend,
     notes:address,
-    fee_percent:document.getElementById('f-fee').value,
+    fee_percent:document.getElementById('f-fee').value||'2% + מע"מ',
     start_date:document.getElementById('f-start').value||null,
     expire_date:expire||null,
     token_expires_at:expireDate.toISOString(),
-    content:{client_name:name,client_id:document.getElementById('f-id').value,client_phone:document.getElementById('f-phone').value,client_email:clientEmail}
+    content:{client_name:name,client_id:document.getElementById('f-id').value,client_phone:document.getElementById('f-phone').value,client_email:clientEmail,deal_type:selectedDealType}
   }).select().single();
   if(error){hideLoading();showToast('שגיאה: '+error.message,'info');return;}
-  if(clientEmail&&selectedSend==='email') await sendEmailForDoc(newDoc);
+  if(clientEmail&&selectedSend==='email'){
+    const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח',buyer_agency:'הסכם תיווך – לקוח קונה'};
+    const typeName=typeNames[selectedDocType]||selectedDocType;
+    const brokerName=currentBroker?.full_name||'המתווך';
+    const signingLink=`${SIGN_URL}?token=${newDoc.signing_token}`;
+    const expireDateStr=expireDate.toLocaleDateString('he-IL');
+    await sendEmail(clientEmail,
+      `${brokerName} שלח/ה לך מסמך לחתימה – ${typeName}`,
+      `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#0f0e0d">
+        <div style="background:#1a1714;padding:20px 24px;border-radius:12px 12px 0 0;text-align:center">
+          <h1 style="color:#c9a84c;font-size:24px;margin:0">BrokerSign</h1>
+          <p style="color:rgba(255,255,255,0.6);margin:6px 0 0;font-size:13px">פלטפורמת חתימה דיגיטלית</p>
+        </div>
+        <div style="background:#faf8f4;padding:32px;border:1px solid #ddd8cf;border-top:none;border-radius:0 0 12px 12px">
+          <p style="font-size:16px;margin-bottom:8px">שלום <strong>${name}</strong>,</p>
+          <p style="color:#6b6560;margin-bottom:24px;line-height:1.6">${brokerName} שלח/ה לך <strong>${typeName}</strong> לחתימה דיגיטלית.</p>
+          <div style="text-align:center;margin-bottom:24px">
+            <a href="${signingLink}" style="background:#c9a84c;color:#1a1714;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:700;font-size:16px;display:inline-block">✍️ לחתימה על המסמך</a>
+          </div>
+          <p style="font-size:12px;color:#6b6560;text-align:center">הקישור תקף עד ${expireDateStr}. לשאלות פנה/י ל-${brokerName}.</p>
+        </div>
+      </div>`
+    );
+  }
   hideLoading();closeModal('newDoc');await loadDocuments();
-  showToast(clientEmail?`✅ מייל נשלח ל-${name}!`:`✅ המסמך נשמר בהצלחה`,'success');
+  showToast(clientEmail?`✅ מייל נשלח ל-${name}!`:`✅ המסמך נשמר`,'success');
 }
 
 function nextStep(){
@@ -447,11 +437,12 @@ function goStep(n){
   document.getElementById('back-btn').style.display=n>1?'inline-flex':'none';
 }
 function resetSteps(){
-  currentStep=1;selectedDocType='';
-  ['f-name','f-id','f-phone','f-email','f-address','f-fee'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  currentStep=1;selectedDocType='';selectedDealType='sale';
+  ['f-name','f-id','f-phone','f-email','f-address','f-fee','f-start','f-expire'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('.doc-type-option').forEach(o=>o.classList.remove('selected'));
   document.querySelectorAll('.send-method-btn').forEach((b,i)=>b.classList.toggle('selected',i===0));
   selectedSend='email';
+  document.getElementById('deal-type-group').style.display='none';
   for(let i=1;i<=3;i++){
     const el=document.getElementById('step'+i);if(el)el.style.display=i===1?'block':'none';
     const s=document.getElementById('s'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
@@ -459,14 +450,25 @@ function resetSteps(){
   document.getElementById('next-btn').textContent='המשך ←';
   document.getElementById('back-btn').style.display='none';
 }
-function selectDoc(el,type){document.querySelectorAll('.doc-type-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selectedDocType=type;}
+function selectDoc(el,type){
+  document.querySelectorAll('.doc-type-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');selectedDocType=type;
+  document.getElementById('deal-type-group').style.display=type==='exclusivity'?'block':'none';
+}
 function selSend(el,method){document.querySelectorAll('.send-method-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');selectedSend=method;}
+function selDealType(el,type){el.closest('.send-method-row').querySelectorAll('.send-method-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');selectedDealType=type;}
 function buildPreview(){
   const name=document.getElementById('f-name').value;
   const addr=document.getElementById('f-address').value;
-  const fee=document.getElementById('f-fee').value||'2%';
+  const fee=document.getElementById('f-fee').value||'2% + מע"מ';
+  const dealMap={sale:'מכירה',rent:'השכרה',both:'מכירה + השכרה'};
   const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח'};
-  document.getElementById('doc-preview').innerHTML=`<h3>${typeNames[selectedDocType]}</h3><p>לקוח: <strong>${name}</strong></p><p>נכס: <strong>${addr||'לא צוין'}</strong></p><p>דמי תיווך: <strong>${fee}</strong></p><p>תאריך: <strong>${new Date().toLocaleDateString('he-IL')}</strong></p>`;
+  document.getElementById('doc-preview').innerHTML=`<h3>${typeNames[selectedDocType]}</h3>
+    <p>לקוח: <strong>${name}</strong></p>
+    <p>נכס: <strong>${addr||'לא צוין'}</strong></p>
+    <p>דמי תיווך: <strong>${fee}</strong></p>
+    ${selectedDocType==='exclusivity'?`<p>סוג עסקה: <strong>${dealMap[selectedDealType]}</strong></p>`:''}
+    <p>תאריך: <strong>${new Date().toLocaleDateString('he-IL')}</strong></p>`;
 }
 async function deleteDoc(id){if(!confirm('למחוק את המסמך?'))return;await sb.from('documents').delete().eq('id',id);await loadDocuments();showToast('🗑 המסמך נמחק','info');}
 function toggleMenu(e,id){e.stopPropagation();document.querySelectorAll('.action-dropdown').forEach(m=>{if(m.id!==id)m.classList.remove('open');});document.getElementById(id).classList.toggle('open');}
