@@ -15,23 +15,26 @@ body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);dir
 .header .secure{font-size:12px;color:rgba(255,255,255,0.5)}
 .container{max-width:720px;margin:0 auto;padding:28px 20px}
 .card{background:var(--warm);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px}
-.card h2{font-size:18px;font-weight:800;margin-bottom:6px}
-.card .sub{font-size:13px;color:var(--mid);margin-bottom:20px}
 .contract{font-size:14px;line-height:2;color:#1a1a1a}
 .contract-title{text-align:center;font-size:20px;font-weight:900;margin-bottom:6px;letter-spacing:1px}
 .contract-sub{text-align:center;font-size:13px;color:var(--mid);margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid var(--ink)}
 .contract-section{margin-bottom:20px}
 .contract-section-title{font-size:15px;font-weight:800;margin-bottom:10px;color:var(--deep);border-right:3px solid var(--gold);padding-right:10px}
 .contract-parties{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
-.party-row{display:grid;grid-template-columns:120px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:13px}
+.party-row{display:grid;grid-template-columns:130px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:13px}
 .party-row:last-child{border-bottom:none}
 .party-label{color:var(--mid);font-weight:600}
 .party-value{font-weight:700}
-.contract-clause{margin-bottom:12px;padding-right:16px;position:relative;line-height:1.8;font-size:13.5px}
-.contract-clause::before{content:counter(clause-counter);counter-increment:clause-counter;position:absolute;right:0;font-weight:800;color:var(--gold);font-size:12px;top:3px}
+.contract-clause{margin-bottom:14px;padding-right:20px;position:relative;line-height:1.9;font-size:13.5px}
+.contract-clause::before{content:counter(clause-counter);counter-increment:clause-counter;position:absolute;right:0;font-weight:800;color:var(--gold);font-size:12px;top:4px}
 .contract-body{counter-reset:clause-counter}
 .contract-highlight{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:6px;padding:10px 14px;margin:12px 0;font-weight:600;font-size:13px}
 .contract-footer{margin-top:24px;padding-top:20px;border-top:2px solid var(--ink);text-align:center;font-size:12px;color:var(--mid)}
+.fee-edit-box{background:#fff;border:2px solid var(--gold);border-radius:10px;padding:16px;margin-top:20px}
+.fee-edit-box label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:var(--deep)}
+.fee-edit-box input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;text-align:center}
+.fee-edit-box input:focus{outline:none;border-color:var(--gold)}
+.fee-edit-note{font-size:11px;color:var(--mid);margin-top:6px;text-align:center}
 .sig-label{font-size:13px;font-weight:600;margin-bottom:8px;display:block}
 .sig-area{border:2px dashed var(--border);border-radius:10px;background:#fff;height:160px;position:relative;overflow:hidden;cursor:crosshair;margin-bottom:10px;touch-action:none}
 .sig-area canvas{position:absolute;inset:0}
@@ -59,7 +62,7 @@ body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);dir
 .step{display:none}
 .step.active{display:block}
 .download-btn{display:inline-flex;align-items:center;gap:8px;background:var(--deep);color:#fff;padding:12px 24px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;margin-top:16px}
-@media(max-width:480px){.container{padding:16px}.card{padding:18px}.party-row{grid-template-columns:100px 1fr}}
+@media(max-width:480px){.container{padding:16px}.card{padding:18px}.party-row{grid-template-columns:110px 1fr}}
 </style>
 </head>
 <body>
@@ -87,13 +90,20 @@ body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);dir
   </div>
   <div id="main-content" style="display:none">
     <div id="step1" class="step active">
-      <div class="card"><div class="contract" id="contract-content"></div></div>
+      <div class="card">
+        <div class="contract" id="contract-content"></div>
+        <div class="fee-edit-box">
+          <label>✏️ דמי תיווך מוסכמים – ניתן לעדכן לפני החתימה:</label>
+          <input type="text" id="fee-input" oninput="updateFee()">
+          <div class="fee-edit-note">שנה את הסכום בהסכמת שני הצדדים לפני החתימה</div>
+        </div>
+      </div>
       <button class="btn btn-primary" onclick="goToStep(2)">קראתי את המסמך ומוכן/ה לחתום ←</button>
     </div>
     <div id="step2" class="step">
       <div class="card">
-        <h2>✍️ חתימה דיגיטלית</h2>
-        <div class="sub">חתום/י בתיבה למטה באצבע</div>
+        <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">✍️ חתימה דיגיטלית</h2>
+        <div style="font-size:13px;color:var(--mid);margin-bottom:20px">חתום/י בתיבה למטה באצבע</div>
         <span class="sig-label">חתימתך:</span>
         <div class="sig-area" id="sig-area">
           <canvas id="sig-canvas"></canvas>
@@ -117,11 +127,21 @@ body{font-family:'Heebo',sans-serif;background:var(--paper);color:var(--ink);dir
 <script>
 const SUPABASE_URL='https://lrelmsldoqkifmxionnk.supabase.co';
 const SUPABASE_KEY='sb_publishable_Z9haU6VnacVW52WoW_Qtsw_bZp9Rs9_';
-const RESEND_KEY='re_f4oCuD6M_5gWBBocPRC4zsZeyJLLtG2gM';
 const {createClient}=supabase;
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 let docData=null,brokerData=null,sigCanvas,sigCtx,signing=false,hasSig=false,signedAt=null,signerNameFinal='';
 const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח',buyer_agency:'הסכם תיווך – לקוח קונה'};
+const dealTypeNames={sale:'מכירה בלבד',rent:'השכרה בלבד',both:'מכירה והשכרה'};
+
+async function sendEmail(to,subject,html){
+  try{
+    await fetch('/api/send-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({to,subject,html})
+    });
+  }catch(e){console.log('Email error:',e);}
+}
 
 async function init(){
   const token=new URLSearchParams(window.location.search).get('token');
@@ -132,11 +152,15 @@ async function init(){
   docData=data;
   const{data:broker}=await sb.from('brokers').select('*').eq('id',data.broker_id).single();
   brokerData=broker;
+  document.getElementById('fee-input').value=data.fee_percent||'2% + מע"מ';
   renderContract();
   document.getElementById('loading-screen').style.display='none';
   document.getElementById('main-content').style.display='block';
   setTimeout(initSig,100);
 }
+
+function getFee(){return document.getElementById('fee-input')?.value||'2% + מע"מ';}
+function updateFee(){renderContract();}
 
 function renderContract(){
   const c=docData.content||{};
@@ -145,7 +169,9 @@ function renderContract(){
   const clientPhone=c.client_phone||'—';
   const clientEmail=c.client_email||'—';
   const property=docData.notes||'—';
-  const fee=docData.fee_percent||'—';
+  const fee=getFee();
+  const dealType=c.deal_type||'both';
+  const dealTypeText=dealTypeNames[dealType]||'מכירה והשכרה';
   const startDate=docData.start_date?new Date(docData.start_date).toLocaleDateString('he-IL'):new Date().toLocaleDateString('he-IL');
   const expireDate=docData.expire_date?new Date(docData.expire_date).toLocaleDateString('he-IL'):'—';
   const today=new Date().toLocaleDateString('he-IL');
@@ -154,7 +180,7 @@ function renderContract(){
   const brokerEmail=brokerData?.email||'—';
   const brokerCompany=brokerData?.company_name||'';
   const docType=docData.document_type;
-  document.title='BrokerSign – '+(typeNames[docType]||'מסמך');
+
   let html='';
   if(docType==='exclusivity'||!docType){
     html=`<div class="contract-title">הסכם בלעדיות בתיווך</div>
@@ -177,6 +203,7 @@ function renderContract(){
       <div class="contract-parties">
         <div style="font-weight:700;font-size:12px;margin-bottom:8px;color:var(--mid)">פרטי הנכס:</div>
         <div class="party-row"><div class="party-label">כתובת:</div><div class="party-value">${property}</div></div>
+        <div class="party-row"><div class="party-label">סוג עסקה:</div><div class="party-value">🏠 ${dealTypeText}</div></div>
         <div class="party-row"><div class="party-label">תקופת בלעדיות:</div><div class="party-value">${startDate} עד ${expireDate}</div></div>
         <div class="party-row"><div class="party-label">דמי תיווך:</div><div class="party-value">${fee}</div></div>
       </div>
@@ -184,16 +211,16 @@ function renderContract(){
     <div class="contract-section">
       <div class="contract-section-title">תנאי ההסכם</div>
       <div class="contract-body">
-        <div class="contract-clause">בעל הנכס מסמיך בזאת את המתווך, בלעדית ובאופן ייחודי, לשווק, לפרסם ולתווך במכירה / השכרת הנכס הנ"ל, בתקופת הבלעדיות הנקובה לעיל.</div>
+        <div class="contract-clause">בעל הנכס מסמיך בזאת את המתווך, בלעדית ובאופן ייחודי, לשווק, לפרסם ולתווך ב<strong>${dealTypeText}</strong> של הנכס הנ"ל, בתקופת הבלעדיות הנקובה לעיל.</div>
         <div class="contract-clause">בתקופת הבלעדיות, בעל הנכס מתחייב שלא להתקשר עם מתווך אחר ולא לנהל מו"מ ישיר עם קונים / שוכרים שלא הגיעו דרך המתווך, אלא בהסכמה כתובה מפורשת.</div>
-        <div class="contract-clause">בגין כל עסקה שתושלם בתקופת הבלעדיות – בין אם באמצעות המתווך ובין אם לאו – יחויב בעל הנכס בדמי תיווך בשיעור של <strong>${fee}</strong> ממחיר העסקה, בתוספת מע"מ כדין.</div>
+        <div class="contract-clause">בגין כל עסקה שתושלם בתקופת הבלעדיות – בין אם באמצעות המתווך ובין אם לאו – יחויב בעל הנכס בדמי תיווך בשיעור של <strong>${fee}</strong> ממחיר העסקה, בתוספת מע"מ כדין. דמי התיווך נקבעו בהסכמת שני הצדדים טרם החתימה.</div>
         <div class="contract-clause">המתווך מתחייב לפעול במיטב יכולתו לשיווק הנכס, לרבות פרסום, הבאת קונים / שוכרים פוטנציאליים, ניהול מו"מ וסיוע בהשלמת העסקה.</div>
         <div class="contract-clause">דמי התיווך ישולמו עם חתימת הסכם המכר / שכירות המחייב, או לפי הסכמה אחרת בכתב בין הצדדים.</div>
         <div class="contract-clause">הפרת תנאי הסכם זה על ידי בעל הנכס תקנה למתווך זכות לפיצויים בגובה דמי התיווך המוסכמים, ללא תלות בהשלמת עסקה בפועל.</div>
         <div class="contract-clause">הסכם זה נערך בהתאם לחוק המתווכים במקרקעין, תשנ"ו-1996 וכל דין רלוונטי אחר.</div>
       </div>
     </div>
-    <div class="contract-highlight">⚖️ חתימה על מסמך זה מהווה הסכמה מלאה ומחייבת לכל התנאים הנקובים לעיל.</div>
+    <div class="contract-highlight">⚖️ חתימה על מסמך זה מהווה הסכמה מלאה ומחייבת לכל התנאים, לרבות תשלום דמי תיווך בשיעור של <strong>${fee}</strong>.</div>
     <div class="contract-footer">מסמך זה נחתם דיגיטלית דרך מערכת BrokerSign | brokersign-rho.vercel.app</div>`;
   } else if(docType==='buyer_agency'){
     html=`<div class="contract-title">הסכם תיווך – לקוח קונה</div>
@@ -217,9 +244,9 @@ function renderContract(){
     <div class="contract-section">
       <div class="contract-section-title">תנאי ההסכם</div>
       <div class="contract-body">
-        <div class="contract-clause">הקונה מסמיך את המתווך לאתר עבורו נכסים המתאימים לדרישותיו, לנהל מו"מ בשמו ולסייע בהשלמת עסקת הרכישה.</div>
-        <div class="contract-clause">בגין כל עסקה שתושלם – יחויב הקונה בדמי תיווך של <strong>${fee}</strong> ממחיר הרכישה, בתוספת מע"מ.</div>
-        <div class="contract-clause">הקונה מתחייב שלא לרכוש נכסים שהוצגו לו על ידי המתווך דרך גורם אחר ללא הסכמה כתובה.</div>
+        <div class="contract-clause">הקונה מסמיך את המתווך לאתר עבורו נכסים, לנהל מו"מ בשמו ולסייע בהשלמת עסקת הרכישה.</div>
+        <div class="contract-clause">בגין כל עסקה שתושלם – יחויב הקונה בדמי תיווך של <strong>${fee}</strong> ממחיר הרכישה, בתוספת מע"מ. דמי התיווך נקבעו בהסכמת שני הצדדים.</div>
+        <div class="contract-clause">הקונה מתחייב שלא לרכוש נכסים שהוצגו לו דרך גורם אחר ללא הסכמה כתובה.</div>
         <div class="contract-clause">דמי התיווך ישולמו במועד חתימת חוזה הרכישה.</div>
       </div>
     </div>
@@ -279,17 +306,21 @@ async function submitSignature(){
   const name=document.getElementById('signer-name').value.trim();
   if(!hasSig||!name)return;
   const sigImage=sigCanvas.toDataURL('image/png');
+  const finalFee=getFee();
   signedAt=new Date();signerNameFinal=name;
   document.getElementById('submit-btn').disabled=true;
   document.getElementById('submit-btn').textContent='שומר חתימה...';
-  const{error}=await sb.from('documents').update({status:'signed',signed_at:signedAt.toISOString(),signature_image:sigImage,signer_name_confirmed:name}).eq('id',docData.id);
+  const{error}=await sb.from('documents').update({
+    status:'signed',signed_at:signedAt.toISOString(),
+    signature_image:sigImage,signer_name_confirmed:name,fee_percent:finalFee
+  }).eq('id',docData.id);
   if(error){alert('שגיאה. נסה שוב.');document.getElementById('submit-btn').disabled=false;document.getElementById('submit-btn').textContent='✅ אני חותם/ת';return;}
   const c=docData.content||{};
   const typeName=typeNames[docData.document_type]||'מסמך';
   const dateStr=signedAt.toLocaleDateString('he-IL')+' '+signedAt.toLocaleTimeString('he-IL');
   const brokerName=brokerData?.full_name||'המתווך';
   const clientName=c.client_name||name;
-  const emailBody=buildEmailHTML(clientName,brokerName,typeName,dateStr,name,sigImage);
+  const emailBody=buildEmailHTML(clientName,brokerName,typeName,dateStr,name,sigImage,finalFee);
   if(c.client_email)await sendEmail(c.client_email,'✅ המסמך נחתם – '+typeName,emailBody);
   if(brokerData?.email)await sendEmail(brokerData.email,'✅ '+clientName+' חתם/ה על '+typeName,emailBody);
   document.getElementById('main-content').style.display='none';
@@ -299,7 +330,7 @@ async function submitSignature(){
   window.scrollTo(0,0);
 }
 
-function buildEmailHTML(clientName,brokerName,typeName,dateStr,signerName,sigImage){
+function buildEmailHTML(clientName,brokerName,typeName,dateStr,signerName,sigImage,fee){
   const c=docData.content||{};
   return `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#0f0e0d">
     <div style="background:#1a1714;padding:24px;text-align:center;border-radius:12px 12px 0 0">
@@ -316,7 +347,7 @@ function buildEmailHTML(clientName,brokerName,typeName,dateStr,signerName,sigIma
         <tr><td style="padding:10px;border:1px solid #ddd8cf;font-weight:600;background:#f7f4ef">שם החותם</td><td style="padding:10px;border:1px solid #ddd8cf">${signerName}</td></tr>
         <tr style="background:#fff"><td style="padding:10px;border:1px solid #ddd8cf;font-weight:600">ת.ז.</td><td style="padding:10px;border:1px solid #ddd8cf">${c.client_id||'—'}</td></tr>
         <tr><td style="padding:10px;border:1px solid #ddd8cf;font-weight:600;background:#f7f4ef">נכס</td><td style="padding:10px;border:1px solid #ddd8cf">${docData.notes||'—'}</td></tr>
-        <tr style="background:#fff"><td style="padding:10px;border:1px solid #ddd8cf;font-weight:600">דמי תיווך</td><td style="padding:10px;border:1px solid #ddd8cf">${docData.fee_percent||'—'}</td></tr>
+        <tr style="background:#fff"><td style="padding:10px;border:1px solid #ddd8cf;font-weight:600">דמי תיווך</td><td style="padding:10px;border:1px solid #ddd8cf"><strong>${fee}</strong></td></tr>
         <tr><td style="padding:10px;border:1px solid #ddd8cf;font-weight:600;background:#f7f4ef">תאריך חתימה</td><td style="padding:10px;border:1px solid #ddd8cf">${dateStr}</td></tr>
         <tr style="background:#fff"><td style="padding:10px;border:1px solid #ddd8cf;font-weight:600">מתווך</td><td style="padding:10px;border:1px solid #ddd8cf">${brokerName}</td></tr>
       </table>
@@ -327,11 +358,6 @@ function buildEmailHTML(clientName,brokerName,typeName,dateStr,signerName,sigIma
       <p style="font-size:12px;color:#6b6560;text-align:center;border-top:1px solid #ddd8cf;padding-top:16px">מסמך זה נחתם דיגיטלית דרך BrokerSign. החתימה מחייבת לכל דבר ועניין.</p>
     </div>
   </div>`;
-}
-
-async function sendEmail(to,subject,html){
-  try{await fetch('https://api.resend.com/emails',{method:'POST',headers:{'Authorization':'Bearer '+RESEND_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:'BrokerSign <onboarding@resend.dev>',to:[to],subject,html})});}
-  catch(e){console.log('Email error:',e);}
 }
 
 async function downloadPDF(){
@@ -356,15 +382,16 @@ body{font-family:'Heebo',Arial,sans-serif;direction:rtl;color:#0f0e0d;background
 .contract-section{margin-bottom:18px}
 .contract-section-title{font-size:13px;font-weight:800;margin-bottom:8px;border-right:3px solid #c9a84c;padding-right:8px}
 .contract-parties{background:#f7f4ef;border:1px solid #ddd8cf;border-radius:6px;padding:12px;margin-bottom:10px}
-.party-row{display:grid;grid-template-columns:120px 1fr;gap:6px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:12px}
+.party-row{display:grid;grid-template-columns:130px 1fr;gap:6px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:12px}
 .party-row:last-child{border-bottom:none}
 .party-label{color:#6b6560;font-weight:600}
 .party-value{font-weight:700}
 .contract-body{counter-reset:clause-counter}
-.contract-clause{font-size:12px;line-height:1.7;margin-bottom:8px;padding-right:16px;position:relative}
+.contract-clause{font-size:12px;line-height:1.7;margin-bottom:8px;padding-right:18px;position:relative}
 .contract-clause::before{content:counter(clause-counter);counter-increment:clause-counter;position:absolute;right:0;font-weight:800;color:#c9a84c;font-size:11px}
 .contract-highlight{background:#fff8e6;border:1px solid #e8d08a;border-radius:6px;padding:10px;font-size:12px;font-weight:600;margin:12px 0}
 .contract-footer{display:none}
+.fee-edit-box{display:none}
 .sig-section{margin-top:20px;padding-top:16px;border-top:2px solid #0f0e0d}
 .sig-title{font-size:13px;font-weight:800;margin-bottom:12px}
 .sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
