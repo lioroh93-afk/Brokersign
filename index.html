@@ -250,17 +250,16 @@ tr:hover td{background:rgba(201,168,76,0.04)}
 const SUPABASE_URL='https://lrelmsldoqkifmxionnk.supabase.co';
 const SUPABASE_KEY='sb_publishable_Z9haU6VnacVW52WoW_Qtsw_bZp9Rs9_';
 const SIGN_URL='https://brokersign-rho.vercel.app/Sign.html';
+const API_URL='https://brokersign-rho.vercel.app/api/send-email';
 const {createClient}=supabase;
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 let currentUser=null,currentBroker=null,allDocs=[],currentStep=1,selectedDocType='',selectedSend='email',selectedDealType='sale';
 
 async function sendEmail(to,subject,html){
   try{
-    await fetch('/api/send-email',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({to,subject,html})
-    });
+    const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,subject,html})});
+    const d=await r.json();
+    console.log('Email result:',d);
   }catch(e){console.log('Email error:',e);}
 }
 
@@ -394,12 +393,13 @@ async function sendDocument(){
   }).select().single();
   if(error){hideLoading();showToast('שגיאה: '+error.message,'info');return;}
   if(clientEmail&&selectedSend==='email'){
-    const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח',buyer_agency:'הסכם תיווך – לקוח קונה'};
+    const typeNames={exclusivity:'הסכם בלעדיות',management:'הסכם ניהול נכס',memorandum:'זיכרון דברים',poa:'ייפוי כוח'};
     const typeName=typeNames[selectedDocType]||selectedDocType;
     const brokerName=currentBroker?.full_name||'המתווך';
     const signingLink=`${SIGN_URL}?token=${newDoc.signing_token}`;
     const expireDateStr=expireDate.toLocaleDateString('he-IL');
-    await sendEmail(clientEmail,
+    await sendEmail(
+      clientEmail,
       `${brokerName} שלח/ה לך מסמך לחתימה – ${typeName}`,
       `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#0f0e0d">
         <div style="background:#1a1714;padding:20px 24px;border-radius:12px 12px 0 0;text-align:center">
@@ -418,7 +418,7 @@ async function sendDocument(){
     );
   }
   hideLoading();closeModal('newDoc');await loadDocuments();
-  showToast(clientEmail?`✅ מייל נשלח ל-${name}!`:`✅ המסמך נשמר`,'success');
+  showToast(clientEmail&&selectedSend==='email'?`✅ מייל נשלח ל-${name}!`:`✅ המסמך נשמר`,'success');
 }
 
 function nextStep(){
